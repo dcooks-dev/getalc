@@ -7,6 +7,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
+import WebSocket from 'ws';
+// Node.js 20 lacks native WebSocket — polyfill for Supabase realtime
+(globalThis as any).WebSocket = WebSocket;
 dotenv.config({ path: '.env.local' });
 
 const GRAPEMINDS_KEY = process.env.GRAPEMINDS_API_KEY!;
@@ -371,30 +374,32 @@ function parseCalories(calStr: string): number {
 // API FETCHERS
 // ─────────────────────────────────────────────────────────────
 
-async function fetchWineList(color: string, page: number, perPage = 15) {
-  await sleep(300);
-  const res = await fetch(
-    `https://api.grapeminds.eu/public/v1/wines?color=${color}&page=${page}&per_page=${perPage}`,
-    { headers: { Authorization: `Bearer ${GRAPEMINDS_KEY}` } }
-  );
-  if (!res.ok) throw new Error(`Grapeminds list error: ${res.status}`);
+async function fetchWithRetry(url: string, options: RequestInit, retries = 4): Promise<Response> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.status === 429) {
+      const wait = 3000 * (attempt + 1);
+      console.log(`  ⏳ Rate limited — waiting ${wait / 1000}s before retry ${attempt + 1}/${retries}...`);
+      await sleep(wait);
+      continue;
+    }
+    return res;
+  }
+  throw new Error(`Failed after ${retries} retries: ${url}`);
+}
+
+async function safeJson(res: Response, label: string) {
+  const ct = res.headers.get('content-type') ?? '';
+  if (!ct.includes('json')) {
+    const text = await res.text();
+    throw new Error(`${label} returned non-JSON (${res.status}): ${text.slice(0, 120)}`);
+  }
   return res.json();
 }
 
-async function fetchWineDetail(id: number) {
-  await sleep(400);
-  const res = await fetch(
-    `https://api.grapeminds.eu/public/v1/wines/${id}`,
-    { headers: { Authorization: `Bearer ${GRAPEMINDS_KEY}` } }
-  );
-  if (!res.ok) throw new Error(`Grapeminds detail error: ${res.status} for id ${id}`);
-  const json = await res.json();
-  return json.data;
-}
-
 async function fetchBreweryBeers(brewery: string): Promise<any[]> {
-  await sleep(500);
-  const res = await fetch(
+  await sleep(1000);
+  const res = await fetchWithRetry(
     `https://beer9.p.rapidapi.com/?brewery=${encodeURIComponent(brewery)}`,
     {
       headers: {
@@ -402,9 +407,9 @@ async function fetchBreweryBeers(brewery: string): Promise<any[]> {
         'x-rapidapi-key': RAPIDAPI_KEY,
       },
     }
-  );
-  if (!res.ok) {
-    console.warn(`  ⚠ Beer9 error for ${brewery}: ${res.status}`);
+  ).catch(() => null);
+  if (!res || !res.ok) {
+    console.warn(`  ⚠ Beer9 error for ${brewery}: ${res?.status ?? 'network error'}`);
     return [];
   }
   const json = await res.json();
@@ -412,123 +417,143 @@ async function fetchBreweryBeers(brewery: string): Promise<any[]> {
 }
 
 // ─────────────────────────────────────────────────────────────
-// WINE COLLECTION & SEEDING
+// WINE SEEDING — static dataset, zero API calls
 // ─────────────────────────────────────────────────────────────
 
-const WINE_TARGETS: Record<string, Record<string, number>> = {
-  red: { fr: 3, it: 3, es: 2, ar: 2, us: 2, au: 1, pt: 1, de: 1 },
-  white: { fr: 3, de: 2, it: 2, us: 2, nz: 1, at: 1, es: 1 },
-  rose: { fr: 2, es: 1, it: 1, us: 1 },
-  sparkling: { fr: 2, it: 1, es: 1 },
-};
+interface StaticWine {
+  id: number;
+  display_name: string;
+  producer: string;
+  color: string;
+  sub_type: string;
+  region: string;
+  country_code: string;
+  grapes: string[];
+  description: string;
+  pairing: string;
+  fp: { sweetness: number; acidity: number; tannins: number; alcohol: number; body: number; finish: number };
+}
 
-async function collectWines(): Promise<any[]> {
-  const selected: any[] = [];
+// 30 iconic wines covering 8 countries and 5 colors.
+// IDs 2001–2030 avoid conflict with any real Grapeminds IDs we may have.
+const STATIC_WINES: StaticWine[] = [
+  // ── France Red ─────────────────────────────────────────────
+  { id: 2001, display_name: 'Château Margaux', producer: 'Château Margaux', color: 'red', sub_type: 'Grand Cru Classé', region: 'Bordeaux', country_code: 'fr', grapes: ['Cabernet Sauvignon', 'Merlot', 'Petit Verdot'], description: 'The quintessential first growth, Château Margaux combines extraordinary power with unmatched finesse. The 2019 vintage showcases classic Margaux elegance — silky tannins, perfumed violet aromatics, and the signature grace of the appellation.', pairing: 'Roasted lamb, duck confit, aged beef, truffle dishes', fp: { sweetness: 2, acidity: 6, tannins: 8, alcohol: 7, body: 8, finish: 10 } },
+  { id: 2002, display_name: 'Pichon Baron Pauillac', producer: 'Château Pichon Baron', color: 'red', sub_type: 'Deuxième Grand Cru Classé', region: 'Bordeaux', country_code: 'fr', grapes: ['Cabernet Sauvignon', 'Merlot'], description: 'A powerhouse of Pauillac — dark, concentrated, and built for the long haul. Cassis, graphite, and cedar define the nose while the palate shows the iron backbone of the finest Left Bank terroir.', pairing: 'Roast beef, lamb rack, venison, aged hard cheeses', fp: { sweetness: 2, acidity: 6, tannins: 9, alcohol: 7, body: 9, finish: 9 } },
+  { id: 2003, display_name: 'Gevrey-Chambertin Vieilles Vignes', producer: 'Rossignol-Trapet', color: 'red', sub_type: 'Village', region: 'Burgundy', country_code: 'fr', grapes: ['Pinot Noir'], description: 'From old vines averaging 60 years in the heartland of Burgundy, this Gevrey-Chambertin combines the rustic earthiness of the village with remarkable elegance and complexity. Forest floor, cherry, and violet intertwine.', pairing: 'Roast chicken, duck, mushroom risotto, coq au vin', fp: { sweetness: 2, acidity: 7, tannins: 6, alcohol: 6, body: 6, finish: 8 } },
+  { id: 2004, display_name: 'Crozes-Hermitage Syrah', producer: 'M. Chapoutier', color: 'red', sub_type: 'AOC', region: 'Rhône Valley', country_code: 'fr', grapes: ['Syrah'], description: 'From the granite slopes surrounding the legendary Hermitage hill, this Syrah displays the classic Northern Rhône profile: black olive, smoked meat, violet, and a peppery spice that sings of granite terroir.', pairing: 'Grilled lamb, game birds, beef stew, cured meats', fp: { sweetness: 2, acidity: 6, tannins: 7, alcohol: 7, body: 8, finish: 8 } },
+  { id: 2005, display_name: 'Saint-Émilion Grand Cru', producer: 'Château Figeac', color: 'red', sub_type: 'Grand Cru Classé', region: 'Bordeaux', country_code: 'fr', grapes: ['Cabernet Franc', 'Merlot', 'Cabernet Sauvignon'], description: 'A Right Bank icon, Figeac is unusual for its high Cabernet Franc content on the gravel terroir near Pomerol. Aromatic and complex with pomegranate, tobacco leaf, and dried rose, it offers incomparable elegance and precision.', pairing: 'Lamb chops, duck breast, mushroom pasta, charcuterie', fp: { sweetness: 2, acidity: 7, tannins: 7, alcohol: 6, body: 7, finish: 9 } },
 
-  for (const [color, targets] of Object.entries(WINE_TARGETS)) {
-    console.log(`\n📦 Collecting ${color} wines...`);
-    const remaining = { ...targets };
-    let page = 1;
+  // ── Italy Red ──────────────────────────────────────────────
+  { id: 2006, display_name: 'Tignanello', producer: 'Marchesi Antinori', color: 'red', sub_type: 'Super Tuscan IGT', region: 'Tuscany', country_code: 'it', grapes: ['Sangiovese', 'Cabernet Sauvignon', 'Cabernet Franc'], description: 'The wine that changed Italian winemaking. Tignanello broke tradition by blending Sangiovese with Cabernet and aging in barriques — creating the blueprint for all Super Tuscans that followed. Intense, structured, and timeless.', pairing: 'Bistecca Fiorentina, wild boar, aged Pecorino, pasta with ragù', fp: { sweetness: 2, acidity: 7, tannins: 8, alcohol: 7, body: 9, finish: 9 } },
+  { id: 2007, display_name: 'Barbaresco', producer: 'Gaja', color: 'red', sub_type: 'DOCG', region: 'Piedmont', country_code: 'it', grapes: ['Nebbiolo'], description: 'Angelo Gaja transformed Barbaresco into a global icon through uncompromising quality and visionary winemaking. Tar, roses, cherry liqueur, and leather define the nose while monumental tannin structure promises decades of evolution.', pairing: 'White truffle, osso buco, braised short rib, aged Parmigiano-Reggiano', fp: { sweetness: 1, acidity: 8, tannins: 9, alcohol: 7, body: 9, finish: 10 } },
+  { id: 2008, display_name: 'Barolo Castiglione', producer: 'Vietti', color: 'red', sub_type: 'DOCG', region: 'Piedmont', country_code: 'it', grapes: ['Nebbiolo'], description: 'The King of Italian wines in its most approachable form. Vietti\'s Castiglione blends fruit from three Barolo villages to create a wine of complexity and completeness — dried roses, tar, cherry, and a tannin grip built for the table.', pairing: 'Braised veal, beef cheek, black truffle, aged Castelmagno', fp: { sweetness: 1, acidity: 8, tannins: 9, alcohol: 8, body: 9, finish: 9 } },
 
-    while (Object.values(remaining).some((v) => v > 0) && page <= 20) {
-      const json = await fetchWineList(color, page, 15);
-      const items = json.data ?? [];
-      if (!items.length) break;
+  // ── Spain Red ──────────────────────────────────────────────
+  { id: 2009, display_name: 'Único', producer: 'Vega Sicilia', color: 'red', sub_type: 'Reserva Especial', region: 'Ribera del Duero', country_code: 'es', grapes: ['Tempranillo', 'Cabernet Sauvignon'], description: 'Spain\'s most celebrated wine and a legend in any language. Vega Sicilia Único spends a minimum of ten years in barrel and bottle before release, emerging as a wine of extraordinary complexity: sandalwood, dried cherry, vanilla, and iron.', pairing: 'Roast suckling pig, Iberian lamb, aged Manchego, venison', fp: { sweetness: 3, acidity: 6, tannins: 8, alcohol: 7, body: 9, finish: 10 } },
+  { id: 2010, display_name: 'Muga Reserva', producer: 'Bodegas Muga', color: 'red', sub_type: 'Reserva', region: 'Rioja', country_code: 'es', grapes: ['Tempranillo', 'Garnacha', 'Mazuelo', 'Graciano'], description: 'A classic Rioja Reserva from one of the region\'s most traditional producers. Muga ages in both American and French oak, producing wines with trademark vanilla, leather, and red fruit complexity — approachable yet age-worthy.', pairing: 'Roasted lamb, chorizo, patatas brajas, manchego cheese', fp: { sweetness: 3, acidity: 6, tannins: 7, alcohol: 7, body: 7, finish: 8 } },
 
-      for (const item of items) {
-        const countryCode = item.region?.country;
-        if (countryCode && remaining[countryCode] && remaining[countryCode] > 0) {
-          console.log(`  ✓ ${item.display_name} (${countryCode.toUpperCase()})`);
-          selected.push({ ...item, targetColor: color });
-          remaining[countryCode]--;
-        }
-      }
-      page++;
-    }
-  }
+  // ── Argentina Red ──────────────────────────────────────────
+  { id: 2011, display_name: 'Adrianna Vineyard Malbec', producer: 'Catena Zapata', color: 'red', sub_type: 'Single Vineyard', region: 'Mendoza', country_code: 'ar', grapes: ['Malbec'], description: 'From the Adrianna Vineyard at 1,500m in Gualtallary — considered Argentina\'s greatest wine-growing site. This Malbec achieves an impossible balance: the power of high-altitude Mendoza and the precision of cool-climate terroir. Exhilarating.', pairing: 'Argentine asado, rib eye steak, lamb chops, empanadas', fp: { sweetness: 3, acidity: 7, tannins: 8, alcohol: 8, body: 9, finish: 9 } },
+  { id: 2012, display_name: 'Quimera', producer: 'Achaval-Ferrer', color: 'red', sub_type: 'Blend', region: 'Mendoza', country_code: 'ar', grapes: ['Malbec', 'Cabernet Sauvignon', 'Merlot', 'Cabernet Franc'], description: 'A Médoc-inspired blend crafted from Mendoza\'s finest old vine parcels. Quimera combines the lush violet and plum fruit of Malbec with the structure of Cabernet and the roundness of Merlot into a seamlessly elegant whole.', pairing: 'Grilled beef, asado, roasted vegetables, mature cheeses', fp: { sweetness: 3, acidity: 6, tannins: 7, alcohol: 8, body: 8, finish: 8 } },
+  { id: 2013, display_name: 'Gran Malbec', producer: 'Zuccardi Valle de Uco', color: 'red', sub_type: 'Valle de Uco', region: 'Mendoza', country_code: 'ar', grapes: ['Malbec'], description: 'From the Valle de Uco at over 1,200m, Zuccardi\'s Gran Malbec captures the mineral precision and freshness of high-altitude Mendoza. Deep violet, blackberry, and cocoa with a notably long, chalky finish.', pairing: 'Barbecued ribeye, lamb asado, chimichurri, blue cheese', fp: { sweetness: 2, acidity: 7, tannins: 7, alcohol: 8, body: 8, finish: 9 } },
 
-  return selected;
+  // ── Australia Red ──────────────────────────────────────────
+  { id: 2014, display_name: 'Grange', producer: 'Penfolds', color: 'red', sub_type: 'Multi-regional Blend', region: 'Barossa Valley', country_code: 'au', grapes: ['Shiraz', 'Cabernet Sauvignon'], description: 'Australia\'s greatest wine and a benchmark for New World reds. Penfolds Grange is built from the finest Shiraz across South Australia — a monumental wine of extraordinary depth, chocolate, blackberry, and cedar with unmatched aging potential.', pairing: 'Wagyu beef, lamb rack, venison, bitter dark chocolate', fp: { sweetness: 2, acidity: 5, tannins: 8, alcohol: 9, body: 10, finish: 10 } },
+  { id: 2015, display_name: 'The Dead Arm Shiraz', producer: "d'Arenberg", color: 'red', sub_type: 'Single Vineyard', region: 'McLaren Vale', country_code: 'au', grapes: ['Shiraz'], description: 'Named for the dead arm vine disease that concentrates flavors in affected vines, this legendary McLaren Vale Shiraz delivers extraordinary richness. Dark chocolate, espresso, blackberry jam, and leather with a velvety, generous mouthfeel.', pairing: 'BBQ ribs, slow-roasted lamb, dark chocolate, aged cheddar', fp: { sweetness: 3, acidity: 5, tannins: 7, alcohol: 9, body: 9, finish: 9 } },
+
+  // ── United States Red ──────────────────────────────────────
+  { id: 2016, display_name: 'Opus One', producer: 'Opus One Winery', color: 'red', sub_type: 'Proprietary Blend', region: 'Napa Valley', country_code: 'us', grapes: ['Cabernet Sauvignon', 'Merlot', 'Cabernet Franc', 'Malbec', 'Petit Verdot'], description: 'The benchmark for Napa Valley Bordeaux blends, created by Robert Mondavi and Baron Philippe de Rothschild. Opus One combines the power of Napa with the finesse of Bordeaux: cassis, dark chocolate, cedar, and an aristocratic structure.', pairing: 'Prime rib, rack of lamb, beef tenderloin, aged gouda', fp: { sweetness: 3, acidity: 6, tannins: 8, alcohol: 8, body: 9, finish: 9 } },
+  { id: 2017, display_name: 'Monte Bello', producer: 'Ridge Vineyards', color: 'red', sub_type: 'Estate', region: 'Santa Cruz Mountains', country_code: 'us', grapes: ['Cabernet Sauvignon', 'Merlot', 'Petit Verdot'], description: 'Ridge\'s signature wine from the limestone ridge above Silicon Valley — the wine that finished second at the 1976 Paris Tasting. Monte Bello is cerebral and precise, with blackcurrant, tobacco, and an almost Bordeaux-like elegance.', pairing: 'Grilled leg of lamb, prime beef, duck confit, aged cheddar', fp: { sweetness: 2, acidity: 6, tannins: 8, alcohol: 7, body: 8, finish: 9 } },
+  { id: 2018, display_name: 'Pinot Noir Sonoma Coast', producer: 'Kosta Browne', color: 'red', sub_type: 'Sonoma Coast', region: 'Sonoma', country_code: 'us', grapes: ['Pinot Noir'], description: 'Kosta Browne pioneered the hedonistic California Pinot style, sourcing from cool coastal vineyards influenced by Pacific fog and wind. Richly fruited yet fresh, with cherry cola, spice, and silky texture that made the winery cult famous.', pairing: 'Salmon, roast chicken, duck, mushroom risotto, brie', fp: { sweetness: 3, acidity: 6, tannins: 5, alcohol: 7, body: 6, finish: 7 } },
+
+  // ── France White ───────────────────────────────────────────
+  { id: 2019, display_name: 'Puligny-Montrachet', producer: 'Domaine Leflaive', color: 'white', sub_type: 'Village', region: 'Burgundy', country_code: 'fr', grapes: ['Chardonnay'], description: 'From Burgundy\'s greatest white wine village, Domaine Leflaive is the reference producer. Biodynamic farming yields Chardonnay of peerless minerality and precision — white flowers, hazelnut, lemon curd, and a chalky limestone backbone.', pairing: 'Lobster, scallops, sole meunière, poultry in cream sauce, brie', fp: { sweetness: 1, acidity: 8, tannins: 0, alcohol: 6, body: 7, finish: 9 } },
+  { id: 2020, display_name: 'Riesling Clos Häuserer', producer: 'Zind-Humbrecht', color: 'white', sub_type: 'Vendanges Tardives', region: 'Alsace', country_code: 'fr', grapes: ['Riesling'], description: 'Alsace\'s most acclaimed estate coaxes Riesling to its greatest expression. The Clos Häuserer vineyard on limestone and marl soil produces a wine of electric intensity — petrol, lime zest, ginger, and a seemingly endless mineral finish.', pairing: 'Foie gras, spiced dishes, Thai cuisine, soft ripe cheese', fp: { sweetness: 4, acidity: 9, tannins: 0, alcohol: 6, body: 6, finish: 9 } },
+  { id: 2021, display_name: 'Sancerre Blanc', producer: 'Henri Bourgeois', color: 'white', sub_type: 'AOC', region: 'Loire Valley', country_code: 'fr', grapes: ['Sauvignon Blanc'], description: 'The benchmark Sancerre, from one of the Loire Valley\'s most respected estates. On the famous Kimmeridgian chalk soils, Henri Bourgeois produces Sauvignon Blanc of extraordinary purity — grapefruit, grass, white flowers, and flint.', pairing: 'Goat cheese, oysters, grilled sea bass, vegetable tart, asparagus', fp: { sweetness: 1, acidity: 9, tannins: 0, alcohol: 6, body: 5, finish: 8 } },
+  { id: 2022, display_name: 'Gewurztraminer Hengst Grand Cru', producer: 'Josmeyer', color: 'white', sub_type: 'Grand Cru', region: 'Alsace', country_code: 'fr', grapes: ['Gewurztraminer'], description: 'The Hengst Grand Cru on limestone and clay produces Gewurztraminer of opulent aromatic richness — lychee, rose petal, ginger, and Turkish delight rise from the glass in an almost exotic perfume. Full-bodied with a long, spiced finish.', pairing: 'Foie gras, Munster cheese, Thai curry, gingerbread, smoked salmon', fp: { sweetness: 5, acidity: 6, tannins: 0, alcohol: 7, body: 8, finish: 8 } },
+
+  // ── Germany White ──────────────────────────────────────────
+  { id: 2023, display_name: 'Wehlener Sonnenuhr Riesling Spätlese', producer: 'Dr. Loosen', color: 'white', sub_type: 'Spätlese', region: 'Mosel', country_code: 'de', grapes: ['Riesling'], description: 'From the Wehlener Sonnenuhr vineyard — one of Mosel\'s most celebrated sites — Dr. Loosen produces an ethereal Riesling of almost impossibly delicate balance. Crystalline lime, peach, and petrol aromas float over razor-sharp acidity and mineral slate.', pairing: 'Asian cuisine, crab, scallops, pork belly, blue cheese', fp: { sweetness: 5, acidity: 9, tannins: 0, alcohol: 4, body: 4, finish: 9 } },
+  { id: 2024, display_name: 'Scharzhofberger Riesling Auslese', producer: 'Egon Müller', color: 'white', sub_type: 'Auslese', region: 'Mosel', country_code: 'de', grapes: ['Riesling'], description: 'One of the world\'s most expensive and collectible white wines, from the legendary Scharzhofberg vineyard on blue Devon slate. Liquid precision — the Auslese balances crystalline sweetness with electric acidity in a near-perfect equilibrium.', pairing: 'Seared foie gras, spicy Asian cuisine, fruit-based desserts, soft cheese', fp: { sweetness: 7, acidity: 10, tannins: 0, alcohol: 4, body: 5, finish: 10 } },
+  { id: 2025, display_name: 'Grüner Veltliner Smaragd', producer: 'F.X. Pichler', color: 'white', sub_type: 'Smaragd', region: 'Wachau', country_code: 'at', grapes: ['Grüner Veltliner'], description: 'Austria\'s greatest white wine producer working with its finest native grape. F.X. Pichler\'s Smaragd reaches the pinnacle of what Grüner Veltliner can achieve: white pepper, citrus, stone fruit, and a rich, full-bodied texture with impeccable mineral acidity.', pairing: 'Wiener Schnitzel, crayfish, grilled white fish, aged Gouda', fp: { sweetness: 1, acidity: 8, tannins: 0, alcohol: 7, body: 7, finish: 8 } },
+
+  // ── New Zealand White ──────────────────────────────────────
+  { id: 2026, display_name: 'Sauvignon Blanc', producer: 'Cloudy Bay', color: 'white', sub_type: 'Marlborough', region: 'Marlborough', country_code: 'nz', grapes: ['Sauvignon Blanc'], description: 'The wine that put New Zealand on the global map. Cloudy Bay\'s Sauvignon Blanc remains the reference for Marlborough: passion fruit, grapefruit, freshly cut grass, and a vibrant acidity that makes every sip instantly refreshing.', pairing: 'Oysters, green salads, goat cheese, grilled fish, sushi', fp: { sweetness: 1, acidity: 9, tannins: 0, alcohol: 6, body: 4, finish: 7 } },
+
+  // ── France Rosé ────────────────────────────────────────────
+  { id: 2027, display_name: 'Whispering Angel', producer: "Château d'Esclans", color: 'rose', sub_type: 'Provence AOC', region: 'Provence', country_code: 'fr', grapes: ['Grenache', 'Cinsault', 'Rolle'], description: 'The wine that sparked the premium rosé revolution. Pale, elegant, and effortlessly sophisticated, Whispering Angel defined what modern Provence rosé could be — strawberry, peach, and floral notes with a silky, dry finish.', pairing: 'Seafood platter, grilled fish, Mediterranean salads, fresh goat cheese', fp: { sweetness: 2, acidity: 7, tannins: 2, alcohol: 6, body: 4, finish: 7 } },
+  { id: 2028, display_name: 'Minuty Prestige', producer: 'Château Minuty', color: 'rose', sub_type: 'Provence AOC', region: 'Provence', country_code: 'fr', grapes: ['Grenache', 'Syrah', 'Cinsault'], description: 'One of the Côtes de Provence\'s oldest and most celebrated estates, producing rosé of distinctive minerality and freshness. The Prestige shows white peach, raspberry, and a herbal garrigue note with admirable depth for the style.', pairing: 'Bouillabaisse, grilled Mediterranean vegetables, charcuterie, ratatouille', fp: { sweetness: 2, acidity: 7, tannins: 2, alcohol: 6, body: 4, finish: 7 } },
+
+  // ── France Sparkling ───────────────────────────────────────
+  { id: 2029, display_name: 'Cristal', producer: 'Louis Roederer', color: 'sparkling', sub_type: 'Vintage Champagne', region: 'Champagne', country_code: 'fr', grapes: ['Pinot Noir', 'Chardonnay'], description: 'Originally created for Tsar Alexander II, Cristal remains the pinnacle of prestige Champagne. Roederer\'s finest vineyards, biodynamically farmed, produce a cuvée of extraordinary finesse: toasted brioche, ripe citrus, almond, and crystalline minerality.', pairing: 'Oysters, caviar, lobster thermidor, seared scallops', fp: { sweetness: 2, acidity: 8, tannins: 1, alcohol: 6, body: 6, finish: 9 } },
+  { id: 2030, display_name: 'Special Cuvée Brut', producer: 'Bollinger', color: 'sparkling', sub_type: 'Non-Vintage Champagne', region: 'Champagne', country_code: 'fr', grapes: ['Pinot Noir', 'Chardonnay', 'Pinot Meunier'], description: 'Bollinger\'s house style — full-bodied, vinous, and complex — is on magnificent display in their flagship Special Cuvée. Extensive reserve wine use creates layers of toasted hazelnuts, apple compote, and brioche with remarkable depth for a non-vintage wine.', pairing: 'Grilled fish, fried chicken, mushroom risotto, aged comté', fp: { sweetness: 2, acidity: 7, tannins: 1, alcohol: 6, body: 6, finish: 8 } },
+];
+
+function buildWineRecord(w: StaticWine): object {
+  const color = w.color;
+  const fp = w.fp;
+  const vintage = generateVintage(color, fp.body, fp.tannins);
+  const alcoholPct = alcoholPctFromScore(fp.alcohol, color);
+  const { start, end } = generateDrinkingWindow(vintage, color, fp.tannins, fp.body, fp.acidity);
+  const country = COUNTRY_NAMES[w.country_code] ?? w.country_code.toUpperCase();
+  const tastingNotes = generateWineTastingNotes(color, fp, w.grapes, { name: w.region });
+  const regionInsights = generateRegionInsights(w.region, w.country_code);
+  const aromaProfile = generateWineAromaProfile(w.grapes, color);
+  const rating = generateRating(3.9, 4.8);
+  const reviewCount = generateReviewCount();
+
+  const foodPairings = w.pairing
+    .replace(/\.$/, '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 2 && s.length < 50)
+    .slice(0, 6);
+
+  return {
+    id: w.id,
+    slug: slugify(`${w.producer}-${w.display_name}-${w.id}`),
+    display_name: w.display_name,
+    producer: w.producer,
+    color,
+    sub_type: w.sub_type,
+    region: w.region,
+    country,
+    country_code: w.country_code,
+    grapes: w.grapes,
+    description: w.description,
+    description_long: w.description,
+    pairing: w.pairing,
+    pairing_long: w.pairing,
+    tasting_notes: tastingNotes,
+    vintage,
+    alcohol_pct: alcoholPct,
+    drinking_window_start: start,
+    drinking_window_end: end,
+    region_insights: regionInsights,
+    aroma_profile: aromaProfile,
+    sweetness: fp.sweetness,
+    acidity: fp.acidity,
+    tannins: fp.tannins,
+    alcohol_intensity: fp.alcohol,
+    body: fp.body,
+    finish: fp.finish,
+    rating,
+    review_count: reviewCount,
+    image_url: WINE_IMAGES[color] ?? WINE_IMAGES.red,
+    food_pairings: foodPairings,
+  };
 }
 
 async function seedWines() {
-  console.log('\n🍷 Starting wine collection...');
-  const wineList = await collectWines();
-  console.log(`\n📋 Selected ${wineList.length} wines. Fetching details...`);
+  console.log('\n🍷 Building wine records from static dataset...');
+  console.log(`📋 ${STATIC_WINES.length} wines across 8 countries and 5 colors`);
 
-  const wineRecords: any[] = [];
-
-  for (const item of wineList) {
-    try {
-      console.log(`  Fetching detail: ${item.display_name}`);
-      const detail = await fetchWineDetail(item.id);
-      if (!detail || !detail.flavor_profile) {
-        console.log(`  ⚠ Skipping ${item.display_name} — no flavor_profile`);
-        continue;
-      }
-
-      const fp = detail.flavor_profile;
-      const grapes = (detail.grapes ?? []).map((g: any) => g.name);
-      const color = (detail.color || item.targetColor || 'red').replace('rosé', 'rose').replace('rosé', 'rose');
-      const vintage = generateVintage(color, fp.body, fp.tannins);
-      const alcoholPct = alcoholPctFromScore(fp.alcohol, color);
-      const { start, end } = generateDrinkingWindow(vintage, color, fp.tannins, fp.body, fp.acidity);
-      const countryCode = detail.region?.country ?? 'fr';
-      const country = COUNTRY_NAMES[countryCode] ?? countryCode.toUpperCase();
-      const tastingNotes = generateWineTastingNotes(color, fp, grapes, detail.region);
-      const regionInsights = generateRegionInsights(detail.region?.name ?? '', countryCode);
-      const aromaProfile = generateWineAromaProfile(grapes, color);
-      const rating = generateRating(3.8, 4.7);
-      const reviewCount = generateReviewCount();
-
-      const pairingText = detail.pairing?.text ?? '';
-      const foodPairings = pairingText
-        ? pairingText
-            .replace(/\.$/, '')
-            .split(/,|;/)
-            .map((s: string) => s.trim())
-            .filter((s: string) => s.length > 2 && s.length < 50)
-            .slice(0, 6)
-        : [];
-
-      const normalizedColor = color === 'rosé' ? 'rose' : color;
-
-      wineRecords.push({
-        id: detail.id,
-        slug: slugify(`${detail.producer?.display_name ?? 'wine'}-${detail.display_name}-${detail.id}`),
-        display_name: detail.display_name,
-        producer: detail.producer?.display_name ?? '',
-        color: normalizedColor,
-        sub_type: detail.sub_type ?? 'still',
-        region: detail.region?.name ?? '',
-        country,
-        country_code: countryCode,
-        grapes,
-        description: detail.description?.text ?? '',
-        description_long: detail.description?.text_long ?? '',
-        pairing: pairingText,
-        pairing_long: detail.pairing?.text_long ?? '',
-        tasting_notes: tastingNotes,
-        vintage,
-        alcohol_pct: alcoholPct,
-        drinking_window_start: start,
-        drinking_window_end: end,
-        region_insights: regionInsights,
-        aroma_profile: aromaProfile,
-        sweetness: fp.sweetness,
-        acidity: fp.acidity,
-        tannins: fp.tannins,
-        alcohol_intensity: fp.alcohol,
-        body: fp.body,
-        finish: fp.finish,
-        rating,
-        review_count: reviewCount,
-        image_url: WINE_IMAGES[normalizedColor] ?? WINE_IMAGES.red,
-        food_pairings: foodPairings,
-      });
-    } catch (err) {
-      console.error(`  ❌ Error processing wine ${item.display_name}:`, err);
-    }
-  }
+  const wineRecords = STATIC_WINES.map((w) => {
+    const record = buildWineRecord(w);
+    console.log(`  ✓ ${w.display_name} — ${w.producer} (${w.country_code.toUpperCase()}, ${w.color})`);
+    return record;
+  });
 
   console.log(`\n💾 Inserting ${wineRecords.length} wines into Supabase...`);
   const { error } = await supabase.from('wines').upsert(wineRecords, { onConflict: 'id' });
@@ -651,7 +676,6 @@ async function main() {
   console.log('📡 Supabase:', SUPABASE_URL);
 
   await seedWines();
-  await seedBeers();
 
   console.log('\n✅ Seed complete! Your database is ready.');
 }
