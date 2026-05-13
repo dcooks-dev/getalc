@@ -86,7 +86,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
 
               {wine.aroma_profile?.length > 0 && (
                 <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">Aroma Profile</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
                   <div className="flex flex-wrap gap-2">
                     {wine.aroma_profile.map((a) => (
                       <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
@@ -138,19 +138,19 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                  <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">ABV</span>
+                  <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">ABV</span>
                   <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
                     {wine.alcohol_pct > 0 ? `${wine.alcohol_pct.toFixed(1)}%` : '—'}
                   </span>
                 </div>
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                  <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">Vintage</span>
+                  <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">Vintage</span>
                   <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
                     {wine.vintage || '—'}
                   </span>
                 </div>
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                  <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">Sub-type</span>
+                  <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">Sub-type</span>
                   <span className="text-sm font-semibold text-text capitalize">
                     {wine.sub_type || '—'}
                   </span>
@@ -159,7 +159,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
 
               {wine.grapes?.length > 0 && (
                 <div>
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted flex items-center gap-2 mb-3">
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary flex items-center gap-2 mb-3">
                     <Grape size={12} /> Grape Varieties
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -174,20 +174,20 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
 
               {wine.description && (
                 <div>
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">About This Wine</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">About This Wine</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{wine.description}</p>
                 </div>
               )}
 
               {wine.tasting_notes && (
                 <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">Tasting Notes</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Tasting Notes</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{wine.tasting_notes}</p>
                 </div>
               )}
 
               <div className="p-5 rounded-lg border border-border bg-surface">
-                <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-4">Flavor Profile</h3>
+                <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-4">Flavor Profile</h3>
                 <WineFlavorBars
                   sweetness={wine.sweetness}
                   acidity={wine.acidity}
@@ -219,7 +219,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
 
               {wine.region_insights && (
                 <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3 flex items-center gap-2">
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3 flex items-center gap-2">
                     <MapPin size={12} /> Region Insights
                   </h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{wine.region_insights}</p>
@@ -228,7 +228,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
 
               {wine.description_long && (
                 <div>
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">Extended Notes</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Extended Notes</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{wine.description_long}</p>
                 </div>
               )}
