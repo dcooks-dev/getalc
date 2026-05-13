@@ -6,11 +6,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function AgeGate() {
   const [visible, setVisible] = useState(false);
 
+  const STORAGE_KEY = 'getalc_age_verified';
+  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
   useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const verifiedAt = parseInt(stored, 10);
+      if (Date.now() - verifiedAt < THIRTY_DAYS_MS) return;
+    }
     setVisible(true);
   }, []);
 
   function handleConfirm() {
+    localStorage.setItem(STORAGE_KEY, Date.now().toString());
     setVisible(false);
   }
 
