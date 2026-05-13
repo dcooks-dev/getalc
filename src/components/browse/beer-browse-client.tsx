@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 
 interface Props {
   filterOptions: { styles: string[]; breweries: string[]; countries: string[] };
+  filterError?: boolean;
 }
 
 const SORT_OPTIONS = [
@@ -85,7 +86,7 @@ function RangeSlider({
   );
 }
 
-export default function BeerBrowseClient({ filterOptions }: Props) {
+export default function BeerBrowseClient({ filterOptions, filterError }: Props) {
   const [beers, setBeers] = useState<Beer[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -142,7 +143,8 @@ export default function BeerBrowseClient({ filterOptions }: Props) {
   }
 
   const hasFilters = search || styles.length || breweries.length || countries.length ||
-    abv[0] > 0 || abv[1] < 15 || ibu[0] > 0 || ibu[1] < 120;
+    abv[0] > 0 || abv[1] < 15 || ibu[0] > 0 || ibu[1] < 120 ||
+    rating[0] > 3.0 || rating[1] < 5.0;
 
   const sidebar = (
     <div className="space-y-0">
@@ -220,6 +222,11 @@ export default function BeerBrowseClient({ filterOptions }: Props) {
               </button>
             )}
           </div>
+          {filterError && (
+            <p className="text-xs text-text-secondary mb-3 py-2 px-3 rounded border border-border bg-surface">
+              Filters unavailable — connection issue.
+            </p>
+          )}
           {sidebar}
         </div>
       </aside>

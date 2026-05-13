@@ -15,6 +15,7 @@ interface Props {
     regions: string[];
     grapes: string[];
   };
+  filterError?: boolean;
 }
 
 const SORT_OPTIONS = [
@@ -92,7 +93,7 @@ function FilterSection({
   );
 }
 
-export default function WineBrowseClient({ filterOptions }: Props) {
+export default function WineBrowseClient({ filterOptions, filterError }: Props) {
   const [wines, setWines] = useState<Wine[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -107,7 +108,6 @@ export default function WineBrowseClient({ filterOptions }: Props) {
   const [acidity, setAcidity] = useState<[number, number]>([1, 10]);
   const [tannins, setTannins] = useState<[number, number]>([1, 10]);
   const [body, setBody] = useState<[number, number]>([1, 10]);
-  const [alcohol, setAlcohol] = useState<[number, number]>([1, 10]);
   const [rating, setRating] = useState<[number, number]>([3.0, 5.0]);
   const [drinkingNow, setDrinkingNow] = useState(false);
   const [sort, setSort] = useState('rating-desc');
@@ -145,7 +145,7 @@ export default function WineBrowseClient({ filterOptions }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [search, colors, countries, regions, grapes, sweetness, acidity, tannins, body, alcohol, rating, drinkingNow, sort, page]);
+  }, [search, colors, countries, regions, grapes, sweetness, acidity, tannins, body, rating, drinkingNow, sort, page]);
 
   useEffect(() => { fetchWines(); }, [fetchWines]);
 
@@ -157,14 +157,15 @@ export default function WineBrowseClient({ filterOptions }: Props) {
   function clearAll() {
     setSearch(''); setColors([]); setCountries([]); setRegions([]);
     setGrapes([]); setSweetness([1, 10]); setAcidity([1, 10]);
-    setTannins([1, 10]); setBody([1, 10]); setAlcohol([1, 10]);
+    setTannins([1, 10]); setBody([1, 10]);
     setRating([3.0, 5.0]); setDrinkingNow(false); setPage(0);
   }
 
   const hasFilters = search || colors.length || countries.length || regions.length ||
     grapes.length || drinkingNow ||
     sweetness[0] > 1 || sweetness[1] < 10 || acidity[0] > 1 || acidity[1] < 10 ||
-    tannins[0] > 1 || tannins[1] < 10;
+    tannins[0] > 1 || tannins[1] < 10 || body[0] > 1 || body[1] < 10 ||
+    rating[0] > 3.0 || rating[1] < 5.0;
 
   const sidebar = (
     <div className="space-y-0">
@@ -276,6 +277,11 @@ export default function WineBrowseClient({ filterOptions }: Props) {
               </button>
             )}
           </div>
+          {filterError && (
+            <p className="text-xs text-text-secondary mb-3 py-2 px-3 rounded border border-border bg-surface">
+              Filters unavailable — connection issue.
+            </p>
+          )}
           {sidebar}
         </div>
       </aside>

@@ -13,9 +13,11 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function WinesPage() {
-  const filterOptions = await getWineFilterOptions().catch(() => ({
-    colors: [], countries: [], regions: [], grapes: [],
-  }));
+  let filterError = false;
+  const filterOptions = await getWineFilterOptions().catch(() => {
+    filterError = true;
+    return { colors: [], countries: [], regions: [], grapes: [] };
+  });
 
   return (
     <>
@@ -31,7 +33,7 @@ export default async function WinesPage() {
               Wine
             </h1>
           </div>
-          <WineBrowseClient filterOptions={filterOptions} />
+          <WineBrowseClient filterOptions={filterOptions} filterError={filterError} />
         </div>
       </main>
       <Footer />

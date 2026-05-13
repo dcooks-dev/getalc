@@ -13,9 +13,11 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function BeersPage() {
-  const filterOptions = await getBeerFilterOptions().catch(() => ({
-    styles: [], breweries: [], countries: [],
-  }));
+  let filterError = false;
+  const filterOptions = await getBeerFilterOptions().catch(() => {
+    filterError = true;
+    return { styles: [], breweries: [], countries: [] };
+  });
 
   return (
     <>
@@ -31,7 +33,7 @@ export default async function BeersPage() {
               Craft Beer
             </h1>
           </div>
-          <BeerBrowseClient filterOptions={filterOptions} />
+          <BeerBrowseClient filterOptions={filterOptions} filterError={filterError} />
         </div>
       </main>
       <Footer />
