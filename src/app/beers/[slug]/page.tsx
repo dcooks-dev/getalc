@@ -81,7 +81,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
 
               {beer.aroma_profile?.length > 0 && (
                 <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">Aroma Profile</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
                   <div className="flex flex-wrap gap-2">
                     {beer.aroma_profile.map((a) => (
                       <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
@@ -95,7 +95,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
               <div className="grid grid-cols-2 gap-3">
                 {beer.suggested_glassware && (
                   <div className="p-4 rounded-lg border border-border bg-surface">
-                    <span className="text-xs text-text-muted flex items-center gap-1.5 mb-1">
+                    <span className="text-xs text-text-secondary flex items-center gap-1.5 mb-1">
                       <GlassWater size={10} /> Glassware
                     </span>
                     <span className="text-sm text-text-secondary">{beer.suggested_glassware}</span>
@@ -103,7 +103,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                 )}
                 {beer.serving_temp_f && (
                   <div className="p-4 rounded-lg border border-border bg-surface">
-                    <span className="text-xs text-text-muted flex items-center gap-1.5 mb-1">
+                    <span className="text-xs text-text-secondary flex items-center gap-1.5 mb-1">
                       <Thermometer size={10} /> Serve At
                     </span>
                     <span className="text-sm text-text-secondary">{beer.serving_temp_f}</span>
@@ -150,20 +150,20 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                  <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">ABV</span>
+                  <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">ABV</span>
                   <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
                     {beer.abv > 0 ? `${beer.abv.toFixed(1)}%` : '—'}
                   </span>
                 </div>
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                  <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">IBU</span>
+                  <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">IBU</span>
                   <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
                     {beer.ibu > 0 ? beer.ibu : '—'}
                   </span>
                 </div>
                 {beer.calories > 0 && (
                   <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                    <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">Cal/12oz</span>
+                    <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">Cal/12oz</span>
                     <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
                       {beer.calories}
                     </span>
@@ -171,7 +171,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                 )}
                 {beer.sub_style && (
                   <div className="p-3 rounded-lg border border-border bg-surface text-center">
-                    <span className="text-xs uppercase tracking-wide text-text-muted block mb-1">Sub-style</span>
+                    <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">Sub-style</span>
                     <span className="text-xs font-semibold text-text">{beer.sub_style}</span>
                   </div>
                 )}
@@ -179,20 +179,20 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
 
               {beer.description && (
                 <div>
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">About This Beer</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">About This Beer</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{beer.description}</p>
                 </div>
               )}
 
               {beer.tasting_notes && (
                 <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">Tasting Notes</h3>
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Tasting Notes</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{beer.tasting_notes}</p>
                 </div>
               )}
 
               <div className="p-5 rounded-lg border border-border bg-surface">
-                <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted mb-4">Flavor Profile</h3>
+                <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-4">Flavor Profile</h3>
                 <BeerFlavorBars
                   bitterness={beer.bitterness}
                   sweetness={beer.sweetness}
@@ -211,7 +211,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
 
               {beer.features && (
                 <div className="p-4 rounded-lg border border-border bg-surface">
-                  <span className="text-xs uppercase tracking-[0.15em] text-text-muted block mb-2">Features</span>
+                  <span className="text-xs uppercase tracking-[0.15em] text-text-secondary block mb-2">Features</span>
                   <span className="text-sm text-text-secondary">{beer.features}</span>
                 </div>
               )}
