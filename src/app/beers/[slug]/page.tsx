@@ -8,7 +8,9 @@ import { BeerFlavorBars } from '@/components/products/flavor-bars';
 import FoodPairings from '@/components/products/food-pairings';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
-import { getBeerImage, formatRating, formatReviewCount } from '@/lib/utils';
+import { formatRating, formatReviewCount } from '@/lib/utils';
+
+const BEER_IMAGE = 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=800&q=80';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -20,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: beer.name,
       description: beer.description,
-      images: [beer.image_url || getBeerImage(beer.style)],
+      images: [BEER_IMAGE],
     },
   };
 }
@@ -30,14 +32,12 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
   const beer = await getBeerBySlug(slug);
   if (!beer) notFound();
 
-  const imageUrl = beer.image_url || getBeerImage(beer.style);
-
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: beer.name,
     description: beer.description,
-    image: imageUrl,
+    image: BEER_IMAGE,
     brand: { '@type': 'Brand', name: beer.brewery },
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -64,7 +64,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
             <div className="space-y-6">
               <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-surface">
                 <Image
-                  src={imageUrl}
+                  src={BEER_IMAGE}
                   alt={beer.name}
                   fill
                   priority

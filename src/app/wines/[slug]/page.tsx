@@ -9,7 +9,9 @@ import DrinkingWindow from '@/components/products/drinking-window';
 import FoodPairings from '@/components/products/food-pairings';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
-import { WINE_COLOR_LABELS, WINE_COLOR_CLASSES, WINE_IMAGE_MAP, formatRating, formatReviewCount, cn } from '@/lib/utils';
+import { WINE_COLOR_LABELS, WINE_COLOR_CLASSES, formatRating, formatReviewCount, cn } from '@/lib/utils';
+
+const WINE_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -21,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: wine.display_name,
       description: wine.description,
-      images: [wine.image_url || WINE_IMAGE_MAP[wine.color]],
+      images: [WINE_IMAGE],
     },
   };
 }
@@ -31,7 +33,6 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
   const wine = await getWineBySlug(slug);
   if (!wine) notFound();
 
-  const imageUrl = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
   const currentYear = new Date().getFullYear();
 
   const jsonLd = {
@@ -39,7 +40,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
     '@type': 'Product',
     name: wine.display_name,
     description: wine.description,
-    image: imageUrl,
+    image: WINE_IMAGE,
     brand: { '@type': 'Brand', name: wine.producer },
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -66,7 +67,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
             <div className="space-y-6">
               <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-surface">
                 <Image
-                  src={imageUrl}
+                  src={WINE_IMAGE}
                   alt={wine.display_name}
                   fill
                   priority

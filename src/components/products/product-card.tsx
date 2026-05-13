@@ -11,9 +11,10 @@ import {
   formatReviewCount,
   WINE_COLOR_LABELS,
   WINE_COLOR_CLASSES,
-  WINE_IMAGE_MAP,
-  getBeerImage,
 } from '@/lib/utils';
+
+const WINE_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
+const BEER_IMAGE = 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=800&q=80';
 
 interface WineCardProps {
   wine: Wine;
@@ -21,21 +22,18 @@ interface WineCardProps {
 }
 
 export function WineCard({ wine, index = 0 }: WineCardProps) {
-  const imageUrl = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
+      className="h-full"
     >
-      <Link href={`/wines/${wine.slug}`} className="block group">
-        <div
-          className="card-hover rounded-lg overflow-hidden border border-border bg-surface"
-        >
-          <div className="relative h-52 overflow-hidden bg-surface-2">
+      <Link href={`/wines/${wine.slug}`} className="flex flex-col h-full group">
+        <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
+          <div className="relative h-48 shrink-0 overflow-hidden bg-surface-2">
             <Image
-              src={imageUrl}
+              src={WINE_IMAGE}
               alt={wine.display_name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -57,43 +55,47 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
             )}
           </div>
 
-          <div className="p-4">
-            <p className="text-xs text-text-secondary uppercase tracking-wider mb-1 truncate">
-              {wine.producer}
-            </p>
-            <h3
-              className="text-base font-semibold text-text mb-1 line-clamp-2 group-hover:text-gold transition-colors duration-300"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
-            >
-              {wine.display_name}
-            </h3>
-            <p className="text-xs text-text-secondary mb-3 truncate">
-              {wine.region}{wine.country ? ` · ${wine.country}` : ''}
-            </p>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Star size={12} className="text-gold fill-gold" />
-                <span className="text-sm font-semibold text-text">{formatRating(wine.rating)}</span>
-                <span className="text-xs text-text-secondary">({formatReviewCount(wine.review_count)})</span>
-              </div>
-              {wine.alcohol_pct > 0 && (
-                <span className="text-xs text-text-secondary">{wine.alcohol_pct.toFixed(1)}% ABV</span>
-              )}
+          <div className="p-4 flex flex-col flex-1 justify-between">
+            <div>
+              <p className="text-xs text-text-secondary uppercase tracking-wider mb-1 truncate">
+                {wine.producer}
+              </p>
+              <h3
+                className="text-base font-semibold text-text mb-1 line-clamp-2 group-hover:text-gold transition-colors duration-300"
+                style={{ fontFamily: 'var(--font-playfair-display)' }}
+              >
+                {wine.display_name}
+              </h3>
+              <p className="text-xs text-text-secondary mb-3 truncate">
+                {wine.region}{wine.country ? ` · ${wine.country}` : ''}
+              </p>
             </div>
 
-            {wine.grapes?.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-1">
-                {wine.grapes.slice(0, 3).map((g) => (
-                  <span
-                    key={g}
-                    className="text-xs px-2 py-0.5 rounded-full border border-border text-text-secondary"
-                  >
-                    {g}
-                  </span>
-                ))}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-1.5">
+                  <Star size={12} className="text-gold fill-gold" />
+                  <span className="text-sm font-semibold text-text">{formatRating(wine.rating)}</span>
+                  <span className="text-xs text-text-secondary">({formatReviewCount(wine.review_count)})</span>
+                </div>
+                {wine.alcohol_pct > 0 && (
+                  <span className="text-xs text-text-secondary">{wine.alcohol_pct.toFixed(1)}% ABV</span>
+                )}
               </div>
-            )}
+
+              {wine.grapes?.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {wine.grapes.slice(0, 3).map((g) => (
+                    <span
+                      key={g}
+                      className="text-xs px-2 py-0.5 rounded-full border border-border text-text-secondary"
+                    >
+                      {g}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </Link>
@@ -107,19 +109,18 @@ interface BeerCardProps {
 }
 
 export function BeerCard({ beer, index = 0 }: BeerCardProps) {
-  const imageUrl = beer.image_url || getBeerImage(beer.style);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
+      className="h-full"
     >
-      <Link href={`/beers/${beer.slug}`} className="block group">
-        <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface">
-          <div className="relative h-52 overflow-hidden bg-surface-2">
+      <Link href={`/beers/${beer.slug}`} className="flex flex-col h-full group">
+        <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
+          <div className="relative h-48 shrink-0 overflow-hidden bg-surface-2">
             <Image
-              src={imageUrl}
+              src={BEER_IMAGE}
               alt={beer.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -138,38 +139,42 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
             )}
           </div>
 
-          <div className="p-4">
-            <p className="text-xs text-text-secondary uppercase tracking-wider mb-1 truncate">
-              {beer.brewery}
-            </p>
-            <h3
-              className="text-base font-semibold text-text mb-1 line-clamp-2 group-hover:text-gold transition-colors duration-300"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
-            >
-              {beer.name}
-            </h3>
-            <p className="text-xs text-text-secondary mb-3 truncate">
-              {beer.region}{beer.country ? ` · ${beer.country}` : ''}
-            </p>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Star size={12} className="text-gold fill-gold" />
-                <span className="text-sm font-semibold text-text">{formatRating(beer.rating)}</span>
-                <span className="text-xs text-text-secondary">({formatReviewCount(beer.review_count)})</span>
-              </div>
-              {beer.ibu > 0 && (
-                <span className="text-xs text-text-secondary">{beer.ibu} IBU</span>
-              )}
+          <div className="p-4 flex flex-col flex-1 justify-between">
+            <div>
+              <p className="text-xs text-text-secondary uppercase tracking-wider mb-1 truncate">
+                {beer.brewery}
+              </p>
+              <h3
+                className="text-base font-semibold text-text mb-1 line-clamp-2 group-hover:text-gold transition-colors duration-300"
+                style={{ fontFamily: 'var(--font-playfair-display)' }}
+              >
+                {beer.name}
+              </h3>
+              <p className="text-xs text-text-secondary mb-3 truncate">
+                {beer.region}{beer.country ? ` · ${beer.country}` : ''}
+              </p>
             </div>
 
-            {beer.sub_style && (
-              <div className="mt-3">
-                <span className="text-xs px-2 py-0.5 rounded-full border border-border text-text-secondary">
-                  {beer.sub_style}
-                </span>
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-1.5">
+                  <Star size={12} className="text-gold fill-gold" />
+                  <span className="text-sm font-semibold text-text">{formatRating(beer.rating)}</span>
+                  <span className="text-xs text-text-secondary">({formatReviewCount(beer.review_count)})</span>
+                </div>
+                {beer.ibu > 0 && (
+                  <span className="text-xs text-text-secondary">{beer.ibu} IBU</span>
+                )}
               </div>
-            )}
+
+              {beer.sub_style && (
+                <div>
+                  <span className="text-xs px-2 py-0.5 rounded-full border border-border text-text-secondary">
+                    {beer.sub_style}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </Link>
