@@ -102,6 +102,6 @@ export function getDrinkingWindowStatus(start: number, end: number): {
   if (year < start) return { label: 'Too Young', color: 'text-blue-400' };
   if (year > end) return { label: 'Past Peak', color: 'text-red-400' };
   const midpoint = (start + end) / 2;
-  if (year < midpoint) return { label: 'Drinking Well', color: 'text-green-400' };
+  if (year < midpoint) return { label: 'Drinking Well', color: 'text-gold' };
   return { label: 'Near Peak', color: 'text-gold' };
 }
