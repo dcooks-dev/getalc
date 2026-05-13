@@ -25,7 +25,7 @@ export default function FlavorBars({ bars, className }: FlavorBarsProps) {
               <span className="text-xs uppercase tracking-[0.15em] text-text-secondary font-medium">
                 {bar.label}
               </span>
-              <span className="text-xs text-text-muted tabular-nums">{bar.value}/{bar.max ?? 10}</span>
+              <span className="text-xs text-text-secondary tabular-nums">{bar.value}/{bar.max ?? 10}</span>
             </div>
             <div className="relative h-1.5 rounded-full flavor-bar-track overflow-hidden">
               <motion.div

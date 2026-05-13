@@ -20,7 +20,7 @@ export default function DrinkingWindow({ vintage, start, end }: DrinkingWindowPr
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted">Drinking Window</h3>
+        <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary">Drinking Window</h3>
         <span className={`text-xs font-medium ${status.color}`}>{status.label}</span>
       </div>
 
@@ -47,7 +47,7 @@ export default function DrinkingWindow({ vintage, start, end }: DrinkingWindowPr
         />
       </div>
 
-      <div className="flex items-center justify-between text-xs text-text-muted">
+      <div className="flex items-center justify-between text-xs text-text-secondary">
         <span>{vintage}</span>
         <span className="text-text-secondary">{start}–{end}</span>
         <span>{end}</span>

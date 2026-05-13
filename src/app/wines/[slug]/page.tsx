@@ -118,7 +118,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                       />
                     ))}
                     <span className="text-sm font-semibold text-text ml-1">{formatRating(wine.rating)}</span>
-                    <span className="text-xs text-text-muted">({formatReviewCount(wine.review_count)} ratings)</span>
+                    <span className="text-xs text-text-secondary">({formatReviewCount(wine.review_count)} ratings)</span>
                   </div>
                 </div>
 
@@ -131,8 +131,8 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                   )}
                   {wine.country && <span className="text-text-muted">·</span>}
                   {wine.country && <span>{wine.country}</span>}
-                  {wine.vintage && <span className="text-text-muted">· {wine.vintage}</span>}
-                  {wine.alcohol_pct > 0 && <span className="text-text-muted">· {wine.alcohol_pct.toFixed(1)}% ABV</span>}
+                  {wine.vintage && <span className="text-text-secondary">· {wine.vintage}</span>}
+                  {wine.alcohol_pct > 0 && <span className="text-text-secondary">· {wine.alcohol_pct.toFixed(1)}% ABV</span>}
                 </div>
               </div>
 

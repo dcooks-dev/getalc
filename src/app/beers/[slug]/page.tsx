@@ -132,7 +132,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                       />
                     ))}
                     <span className="text-sm font-semibold text-text ml-1">{formatRating(beer.rating)}</span>
-                    <span className="text-xs text-text-muted">({formatReviewCount(beer.review_count)} ratings)</span>
+                    <span className="text-xs text-text-secondary">({formatReviewCount(beer.review_count)} ratings)</span>
                   </div>
                 </div>
 

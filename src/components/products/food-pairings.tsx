@@ -8,7 +8,7 @@ interface FoodPairingsProps {
 export default function FoodPairings({ pairings, pairingText }: FoodPairingsProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-xs uppercase tracking-[0.2em] text-text-muted flex items-center gap-2">
+      <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary flex items-center gap-2">
         <Utensils size={12} />
         Food Pairings
       </h3>

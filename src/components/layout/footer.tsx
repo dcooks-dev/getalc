@@ -17,7 +17,7 @@ export default function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-text-muted mb-4">Explore</h4>
+            <h4 className="text-xs tracking-[0.2em] uppercase text-text-secondary mb-4">Explore</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/wines" className="text-sm text-text-secondary hover:text-gold transition-colors">
@@ -32,7 +32,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-text-muted mb-4">About</h4>
+            <h4 className="text-xs tracking-[0.2em] uppercase text-text-secondary mb-4">About</h4>
             <p className="text-sm text-text-secondary leading-relaxed">
               GetAlc is a demo project showcasing premium alcohol discovery. All data sourced from real producers. Please drink responsibly.
             </p>
@@ -40,10 +40,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border-subtle pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-secondary">
             © {new Date().getFullYear()} GetAlc. For adults of legal drinking age only.
           </p>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-secondary">
             Please drink responsibly.
           </p>
         </div>

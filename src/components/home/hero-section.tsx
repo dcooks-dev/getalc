@@ -111,7 +111,7 @@ export default function HeroSection() {
               >
                 {stat.value}
               </div>
-              <div className="text-xs uppercase tracking-[0.2em] text-text-muted">{stat.label}</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-text-secondary">{stat.label}</div>
             </div>
           ))}
         </motion.div>
@@ -123,7 +123,7 @@ export default function HeroSection() {
         transition={{ duration: 1, delay: 1.2 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="text-xs uppercase tracking-[0.3em] text-text-muted">Scroll</span>
+        <span className="text-xs uppercase tracking-[0.3em] text-text-secondary">Scroll</span>
         <div className="w-px h-8 bg-border" />
       </motion.div>
     </section>

@@ -36,7 +36,7 @@ function RangeSlider({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-xs text-text-secondary">{label}</span>
-        <span className="text-xs text-text-muted">
+        <span className="text-xs text-text-secondary">
           {value[0]}{suffix} – {value[1]}{suffix}
         </span>
       </div>
@@ -72,7 +72,7 @@ function FilterSection({
         onClick={() => setOpen(!open)}
         className="flex items-center justify-between w-full text-left"
       >
-        <span className="text-xs uppercase tracking-[0.15em] text-text-muted">{title}</span>
+        <span className="text-xs uppercase tracking-[0.15em] text-text-secondary">{title}</span>
         {open ? <ChevronUp size={12} className="text-text-muted" /> : <ChevronDown size={12} className="text-text-muted" />}
       </button>
       <AnimatePresence initial={false}>
@@ -269,7 +269,7 @@ export default function WineBrowseClient({ filterOptions }: Props) {
       <aside className="hidden lg:block w-56 shrink-0">
         <div className="sticky top-24">
           <div className="flex items-center justify-between mb-2 pb-3 border-b border-border">
-            <span className="text-xs uppercase tracking-[0.2em] text-text-muted">Filters</span>
+            <span className="text-xs uppercase tracking-[0.2em] text-text-secondary">Filters</span>
             {hasFilters && (
               <button onClick={clearAll} className="text-xs text-gold hover:text-gold-light transition-colors">
                 Clear All
@@ -317,7 +317,7 @@ export default function WineBrowseClient({ filterOptions }: Props) {
         </div>
 
         <div className="flex items-center justify-between mb-5">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-secondary">
             {loading ? 'Loading...' : `${count} wines`}
           </p>
           {hasFilters && (
@@ -357,7 +357,7 @@ export default function WineBrowseClient({ filterOptions }: Props) {
             >
               Previous
             </button>
-            <span className="text-xs text-text-muted">
+            <span className="text-xs text-text-secondary">
               Page {page + 1} of {Math.ceil(count / pageSize)}
             </span>
             <button

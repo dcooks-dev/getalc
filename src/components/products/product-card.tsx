@@ -58,7 +58,7 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
           </div>
 
           <div className="p-4">
-            <p className="text-xs text-text-muted uppercase tracking-wider mb-1 truncate">
+            <p className="text-xs text-text-secondary uppercase tracking-wider mb-1 truncate">
               {wine.producer}
             </p>
             <h3
@@ -75,10 +75,10 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
               <div className="flex items-center gap-1.5">
                 <Star size={12} className="text-gold fill-gold" />
                 <span className="text-sm font-semibold text-text">{formatRating(wine.rating)}</span>
-                <span className="text-xs text-text-muted">({formatReviewCount(wine.review_count)})</span>
+                <span className="text-xs text-text-secondary">({formatReviewCount(wine.review_count)})</span>
               </div>
               {wine.alcohol_pct > 0 && (
-                <span className="text-xs text-text-muted">{wine.alcohol_pct.toFixed(1)}% ABV</span>
+                <span className="text-xs text-text-secondary">{wine.alcohol_pct.toFixed(1)}% ABV</span>
               )}
             </div>
 
@@ -87,7 +87,7 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
                 {wine.grapes.slice(0, 3).map((g) => (
                   <span
                     key={g}
-                    className="text-xs px-2 py-0.5 rounded-full border border-border text-text-muted"
+                    className="text-xs px-2 py-0.5 rounded-full border border-border text-text-secondary"
                   >
                     {g}
                   </span>
@@ -139,7 +139,7 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
           </div>
 
           <div className="p-4">
-            <p className="text-xs text-text-muted uppercase tracking-wider mb-1 truncate">
+            <p className="text-xs text-text-secondary uppercase tracking-wider mb-1 truncate">
               {beer.brewery}
             </p>
             <h3
@@ -156,16 +156,16 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
               <div className="flex items-center gap-1.5">
                 <Star size={12} className="text-gold fill-gold" />
                 <span className="text-sm font-semibold text-text">{formatRating(beer.rating)}</span>
-                <span className="text-xs text-text-muted">({formatReviewCount(beer.review_count)})</span>
+                <span className="text-xs text-text-secondary">({formatReviewCount(beer.review_count)})</span>
               </div>
               {beer.ibu > 0 && (
-                <span className="text-xs text-text-muted">{beer.ibu} IBU</span>
+                <span className="text-xs text-text-secondary">{beer.ibu} IBU</span>
               )}
             </div>
 
             {beer.sub_style && (
               <div className="mt-3">
-                <span className="text-xs px-2 py-0.5 rounded-full border border-border text-text-muted">
+                <span className="text-xs px-2 py-0.5 rounded-full border border-border text-text-secondary">
                   {beer.sub_style}
                 </span>
               </div>

@@ -15,7 +15,7 @@ export function StatCard({ label, value, sub, className }: StatCardProps) {
         className
       )}
     >
-      <span className="text-xs uppercase tracking-[0.15em] text-text-muted mb-1">{label}</span>
+      <span className="text-xs uppercase tracking-[0.15em] text-text-secondary mb-1">{label}</span>
       <span
         className="text-2xl font-bold text-text"
         style={{ fontFamily: 'var(--font-playfair-display)' }}
