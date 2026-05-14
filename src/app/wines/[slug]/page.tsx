@@ -85,18 +85,6 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                 </span>
               </div>
 
-              {wine.aroma_profile?.length > 0 && (
-                <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {wine.aroma_profile.map((a) => (
-                      <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
-                        {a}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="space-y-8">
@@ -228,6 +216,19 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                 <div>
                   <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Extended Notes</h3>
                   <p className="text-sm text-text-secondary leading-relaxed">{wine.description_long}</p>
+                </div>
+              )}
+
+              {wine.aroma_profile?.length > 0 && (
+                <div className="p-5 rounded-lg border border-border bg-surface">
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {wine.aroma_profile.map((a) => (
+                      <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
+                        {a}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
 

@@ -79,37 +79,6 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                 )}
               </div>
 
-              {beer.aroma_profile?.length > 0 && (
-                <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {beer.aroma_profile.map((a) => (
-                      <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
-                        {a}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-3">
-                {beer.suggested_glassware && (
-                  <div className="p-4 rounded-lg border border-border bg-surface">
-                    <span className="text-xs text-text-secondary flex items-center gap-1.5 mb-1">
-                      <GlassWater size={10} /> Glassware
-                    </span>
-                    <span className="text-sm text-text-secondary">{beer.suggested_glassware}</span>
-                  </div>
-                )}
-                {beer.serving_temp_f && (
-                  <div className="p-4 rounded-lg border border-border bg-surface">
-                    <span className="text-xs text-text-secondary flex items-center gap-1.5 mb-1">
-                      <Thermometer size={10} /> Serve At
-                    </span>
-                    <span className="text-sm text-text-secondary">{beer.serving_temp_f}</span>
-                  </div>
-                )}
-              </div>
             </div>
 
             <div className="space-y-8">
@@ -213,6 +182,40 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                 <div className="p-4 rounded-lg border border-border bg-surface">
                   <span className="text-xs uppercase tracking-[0.15em] text-text-secondary block mb-2">Features</span>
                   <span className="text-sm text-text-secondary">{beer.features}</span>
+                </div>
+              )}
+
+              {beer.aroma_profile?.length > 0 && (
+                <div className="p-5 rounded-lg border border-border bg-surface">
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {beer.aroma_profile.map((a) => (
+                      <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
+                        {a}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(beer.suggested_glassware || beer.serving_temp_f) && (
+                <div className="grid grid-cols-2 gap-3">
+                  {beer.suggested_glassware && (
+                    <div className="p-4 rounded-lg border border-border bg-surface">
+                      <span className="text-xs text-text-secondary flex items-center gap-1.5 mb-1">
+                        <GlassWater size={10} /> Glassware
+                      </span>
+                      <span className="text-sm text-text-secondary">{beer.suggested_glassware}</span>
+                    </div>
+                  )}
+                  {beer.serving_temp_f && (
+                    <div className="p-4 rounded-lg border border-border bg-surface">
+                      <span className="text-xs text-text-secondary flex items-center gap-1.5 mb-1">
+                        <Thermometer size={10} /> Serve At
+                      </span>
+                      <span className="text-sm text-text-secondary">{beer.serving_temp_f}</span>
+                    </div>
+                  )}
                 </div>
               )}
 
