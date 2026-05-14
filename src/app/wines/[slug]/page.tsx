@@ -209,12 +209,9 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                 </div>
               )}
 
-              {(wine.food_pairings?.length > 0 || wine.pairing) && (
+              {wine.food_pairings?.length > 0 && (
                 <div className="p-5 rounded-lg border border-border bg-surface">
-                  <FoodPairings
-                    pairings={wine.food_pairings ?? []}
-                    pairingText={wine.pairing}
-                  />
+                  <FoodPairings pairings={wine.food_pairings} />
                 </div>
               )}
 
