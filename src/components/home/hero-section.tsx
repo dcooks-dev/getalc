@@ -31,13 +31,13 @@ export default function HeroSection() {
         ))}
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-20">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs uppercase tracking-[0.4em] text-gold mb-8">
+          <p className="text-xs uppercase tracking-[0.4em] text-gold mb-4">
             The Alcohol Encyclopedia
           </p>
         </motion.div>
