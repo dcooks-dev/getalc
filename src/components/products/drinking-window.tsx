@@ -65,11 +65,11 @@ export default function DrinkingWindow({ vintage, start, end }: DrinkingWindowPr
 
           {/* Dot — non-interactive, marks where 'now' sits on the timeline */}
           <div
-            className="absolute w-3 h-3 rounded-full border-2 border-gold z-10"
+            className="absolute w-3 h-3 rounded-full border-2 border-green-500 z-10"
             style={{
               left: `${currentPct}%`,
               transform: 'translateX(-50%)',
-              background: dotInWindow ? '#D4A853' : '#2A2A2A',
+              background: dotInWindow ? '#22C55E' : '#166534',
               pointerEvents: 'none',
             }}
           />
