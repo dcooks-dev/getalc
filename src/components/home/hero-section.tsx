@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 
 export default function HeroSection() {
   return (
@@ -39,7 +38,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6 }}
         >
           <p className="text-xs uppercase tracking-[0.4em] text-gold mb-8">
-            Premium Discovery
+            The Alcohol Encyclopedia
           </p>
         </motion.div>
 
@@ -52,7 +51,7 @@ export default function HeroSection() {
         >
           Discover
           <br />
-          <span className="gold-gradient">Extraordinary</span>
+          <span className="gold-gradient">Extraordinary Drinks</span>
         </motion.h1>
 
         <motion.p
@@ -61,8 +60,7 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          Hand-curated wines and craft beers from the world&apos;s finest producers.
-          Deep tasting notes, expert pairings, and unmatched discovery.
+          Tasting notes, flavor profiles, food pairings and regional insights for wines, beers and spirits from around the world.
         </motion.p>
 
         <motion.div
@@ -72,24 +70,22 @@ export default function HeroSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link
-            href="/wines"
-            className="group flex items-center gap-3 px-8 py-4 text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-gold"
+            href="/browse"
+            className="px-8 py-4 text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-gold"
             style={{
               background: 'linear-gradient(135deg, #D4A853, #B8892E)',
               color: '#0A0A0A',
               borderRadius: '2px',
             }}
           >
-            Explore Wines
-            <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            Explore Collection →
           </Link>
           <Link
-            href="/beers"
-            className="group flex items-center gap-3 px-8 py-4 text-sm font-medium tracking-wider uppercase border border-border text-text-secondary hover:text-text hover:border-gold transition-all duration-300"
+            href="/browse#categories"
+            className="px-8 py-4 text-sm font-medium tracking-wider uppercase border border-border text-text-secondary hover:text-text hover:border-gold transition-all duration-300"
             style={{ borderRadius: '2px' }}
           >
-            Craft Beers
-            <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            Browse by Category →
           </Link>
         </motion.div>
 
