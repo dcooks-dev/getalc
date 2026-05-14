@@ -61,7 +61,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20">
-            <div className="space-y-6">
+            <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
               <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-surface">
                 <Image
                   src={BEER_IMAGE}
