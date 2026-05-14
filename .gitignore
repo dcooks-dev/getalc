@@ -46,3 +46,5 @@ next-env.d.ts
 # local tooling
 .claude/
 test folder/
+
+.env*.local
