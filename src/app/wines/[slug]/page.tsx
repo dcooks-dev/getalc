@@ -9,21 +9,20 @@ import DrinkingWindow from '@/components/products/drinking-window';
 import FoodPairings from '@/components/products/food-pairings';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
-import { WINE_COLOR_LABELS, WINE_COLOR_CLASSES, formatRating, formatReviewCount, cn } from '@/lib/utils';
-
-const WINE_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
+import { WINE_COLOR_LABELS, WINE_COLOR_CLASSES, WINE_IMAGE_MAP, formatRating, formatReviewCount, formatPrice, cn } from '@/lib/utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const wine = await getWineBySlug(slug);
   if (!wine) return { title: 'Wine Not Found' };
+  const image = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
   return {
     title: `${wine.display_name} | ${wine.producer}`,
     description: wine.description || `Discover ${wine.display_name} from ${wine.producer}. ${wine.color} wine from ${wine.region}.`,
     openGraph: {
       title: wine.display_name,
       description: wine.description,
-      images: [WINE_IMAGE],
+      images: [image],
     },
   };
 }
@@ -34,13 +33,14 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
   if (!wine) notFound();
 
   const currentYear = new Date().getFullYear();
+  const wineImage = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: wine.display_name,
     description: wine.description,
-    image: WINE_IMAGE,
+    image: wineImage,
     brand: { '@type': 'Brand', name: wine.producer },
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -67,7 +67,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
             <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
               <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-surface">
                 <Image
-                  src={WINE_IMAGE}
+                  src={wineImage}
                   alt={wine.display_name}
                   fill
                   priority
@@ -232,14 +232,46 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                 </div>
               )}
 
-              <button
-                disabled
-                className="w-full flex items-center justify-center gap-3 py-4 text-sm font-medium tracking-wider uppercase opacity-40 cursor-not-allowed border border-gold/30 text-gold rounded"
-                title="Purchase functionality coming soon"
-              >
-                <ShoppingCart size={16} />
-                Buy Now — Coming Soon
-              </button>
+              <div className="space-y-3">
+                {wine.price != null && wine.price > 0 && (
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className="text-2xl font-bold text-gold"
+                      style={{ fontFamily: 'var(--font-playfair-display)' }}
+                    >
+                      {formatPrice(wine.price, wine.original_currency)}
+                    </span>
+                    {wine.original_price != null && wine.original_price !== wine.price && (
+                      <span className="text-sm text-text-muted line-through">
+                        {formatPrice(wine.original_price, wine.original_currency)}
+                      </span>
+                    )}
+                    {wine.merchant_name && (
+                      <span className="text-xs text-text-muted">via {wine.merchant_name}</span>
+                    )}
+                  </div>
+                )}
+                {wine.product_url ? (
+                  <a
+                    href={wine.product_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-3 py-4 text-sm font-medium tracking-wider uppercase border border-gold/50 text-gold rounded hover:bg-gold/10 transition-colors duration-200"
+                  >
+                    <ShoppingCart size={16} />
+                    Buy Now →
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full flex items-center justify-center gap-3 py-4 text-sm font-medium tracking-wider uppercase opacity-40 cursor-not-allowed border border-gold/30 text-gold rounded"
+                    title="Purchase functionality coming soon"
+                  >
+                    <ShoppingCart size={16} />
+                    Buy Now — Coming Soon
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

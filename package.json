@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "datafeedr-match": "tsx scripts/datafeedr-match.ts"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.3",

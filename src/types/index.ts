@@ -31,6 +31,16 @@ export interface Wine {
   image_url: string;
   food_pairings: string[];
   created_at: string;
+  // Datafeedr enrichment
+  product_url: string | null;
+  price: number | null;
+  original_price: number | null;
+  original_currency: string | null;
+  merchant_name: string | null;
+  datafeedr_id: string | null;
+  datafeedr_matched: boolean;
+  match_confidence_score: number | null;
+  needs_review: boolean;
 }
 
 export interface Beer {
@@ -66,6 +76,16 @@ export interface Beer {
   review_count: number;
   image_url: string;
   created_at: string;
+  // Datafeedr enrichment
+  product_url: string | null;
+  price: number | null;
+  original_price: number | null;
+  original_currency: string | null;
+  merchant_name: string | null;
+  datafeedr_id: string | null;
+  datafeedr_matched: boolean;
+  match_confidence_score: number | null;
+  needs_review: boolean;
 }
 
 export type WineColor = 'red' | 'white' | 'rose' | 'sparkling' | 'dessert' | 'fortified';

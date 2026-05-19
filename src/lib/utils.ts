@@ -94,6 +94,14 @@ export function getBeerImage(style: string): string {
   return BEER_IMAGE_MAP.light;
 }
 
+export function formatPrice(price: number, currency?: string | null): string {
+  const symbols: Record<string, string> = {
+    USD: '$', EUR: '€', GBP: '£', AUD: 'A$', CAD: 'C$', NZD: 'NZ$',
+  };
+  const symbol = currency ? (symbols[currency.toUpperCase()] ?? `${currency} `) : '$';
+  return `${symbol}${price.toFixed(2)}`;
+}
+
 export function getDrinkingWindowStatus(start: number, end: number): {
   label: string;
   color: string;

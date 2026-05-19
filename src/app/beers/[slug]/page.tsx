@@ -8,21 +8,20 @@ import { BeerFlavorBars } from '@/components/products/flavor-bars';
 import FoodPairings from '@/components/products/food-pairings';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
-import { formatRating, formatReviewCount } from '@/lib/utils';
-
-const BEER_IMAGE = 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=800&q=80';
+import { formatRating, formatReviewCount, formatPrice, getBeerImage } from '@/lib/utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const beer = await getBeerBySlug(slug);
   if (!beer) return { title: 'Beer Not Found' };
+  const image = beer.image_url || getBeerImage(beer.style);
   return {
     title: `${beer.name} | ${beer.brewery}`,
     description: beer.description || `Discover ${beer.name} by ${beer.brewery}. ${beer.style} with ${beer.abv}% ABV.`,
     openGraph: {
       title: beer.name,
       description: beer.description,
-      images: [BEER_IMAGE],
+      images: [image],
     },
   };
 }
@@ -32,12 +31,14 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
   const beer = await getBeerBySlug(slug);
   if (!beer) notFound();
 
+  const beerImage = beer.image_url || getBeerImage(beer.style);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: beer.name,
     description: beer.description,
-    image: BEER_IMAGE,
+    image: beerImage,
     brand: { '@type': 'Brand', name: beer.brewery },
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -64,7 +65,7 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
             <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
               <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-surface">
                 <Image
-                  src={BEER_IMAGE}
+                  src={beerImage}
                   alt={beer.name}
                   fill
                   priority
@@ -219,14 +220,46 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                 </div>
               )}
 
-              <button
-                disabled
-                className="w-full flex items-center justify-center gap-3 py-4 text-sm font-medium tracking-wider uppercase opacity-40 cursor-not-allowed border border-gold/30 text-gold rounded"
-                title="Purchase functionality coming soon"
-              >
-                <ShoppingCart size={16} />
-                Buy Now — Coming Soon
-              </button>
+              <div className="space-y-3">
+                {beer.price != null && beer.price > 0 && (
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className="text-2xl font-bold text-gold"
+                      style={{ fontFamily: 'var(--font-playfair-display)' }}
+                    >
+                      {formatPrice(beer.price, beer.original_currency)}
+                    </span>
+                    {beer.original_price != null && beer.original_price !== beer.price && (
+                      <span className="text-sm text-text-muted line-through">
+                        {formatPrice(beer.original_price, beer.original_currency)}
+                      </span>
+                    )}
+                    {beer.merchant_name && (
+                      <span className="text-xs text-text-muted">via {beer.merchant_name}</span>
+                    )}
+                  </div>
+                )}
+                {beer.product_url ? (
+                  <a
+                    href={beer.product_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-3 py-4 text-sm font-medium tracking-wider uppercase border border-gold/50 text-gold rounded hover:bg-gold/10 transition-colors duration-200"
+                  >
+                    <ShoppingCart size={16} />
+                    Buy Now →
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full flex items-center justify-center gap-3 py-4 text-sm font-medium tracking-wider uppercase opacity-40 cursor-not-allowed border border-gold/30 text-gold rounded"
+                    title="Purchase functionality coming soon"
+                  >
+                    <ShoppingCart size={16} />
+                    Buy Now — Coming Soon
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
