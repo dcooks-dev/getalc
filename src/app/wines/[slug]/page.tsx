@@ -239,13 +239,8 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                       className="text-2xl font-bold text-gold"
                       style={{ fontFamily: 'var(--font-playfair-display)' }}
                     >
-                      {formatPrice(wine.price, wine.original_currency)}
+                      {formatPrice(wine.price)}
                     </span>
-                    {wine.original_price != null && wine.original_price !== wine.price && (
-                      <span className="text-sm text-text-muted line-through">
-                        {formatPrice(wine.original_price, wine.original_currency)}
-                      </span>
-                    )}
                     {wine.merchant_name && (
                       <span className="text-xs text-text-muted">via {wine.merchant_name}</span>
                     )}

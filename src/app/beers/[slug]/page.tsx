@@ -227,13 +227,8 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
                       className="text-2xl font-bold text-gold"
                       style={{ fontFamily: 'var(--font-playfair-display)' }}
                     >
-                      {formatPrice(beer.price, beer.original_currency)}
+                      {formatPrice(beer.price)}
                     </span>
-                    {beer.original_price != null && beer.original_price !== beer.price && (
-                      <span className="text-sm text-text-muted line-through">
-                        {formatPrice(beer.original_price, beer.original_currency)}
-                      </span>
-                    )}
                     {beer.merchant_name && (
                       <span className="text-xs text-text-muted">via {beer.merchant_name}</span>
                     )}

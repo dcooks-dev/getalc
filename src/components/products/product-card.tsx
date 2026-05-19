@@ -9,12 +9,12 @@ import {
   cn,
   formatRating,
   formatReviewCount,
+  formatPrice,
   WINE_COLOR_LABELS,
   WINE_COLOR_CLASSES,
+  WINE_IMAGE_MAP,
+  getBeerImage,
 } from '@/lib/utils';
-
-const WINE_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
-const BEER_IMAGE = 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=800&q=80';
 
 interface WineCardProps {
   wine: Wine;
@@ -22,6 +22,7 @@ interface WineCardProps {
 }
 
 export function WineCard({ wine, index = 0 }: WineCardProps) {
+  const imageUrl = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -31,13 +32,13 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
     >
       <Link href={`/wines/${wine.slug}`} className="flex flex-col h-full group">
         <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
-          <div className="relative h-48 shrink-0 overflow-hidden bg-surface-2">
+          <div className="relative h-56 shrink-0 overflow-hidden bg-surface-2">
             <Image
-              src={WINE_IMAGE}
+              src={imageUrl}
               alt={wine.display_name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)' }} />
             <span
@@ -109,6 +110,7 @@ interface BeerCardProps {
 }
 
 export function BeerCard({ beer, index = 0 }: BeerCardProps) {
+  const imageUrl = beer.image_url || getBeerImage(beer.style);
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -118,13 +120,13 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
     >
       <Link href={`/beers/${beer.slug}`} className="flex flex-col h-full group">
         <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
-          <div className="relative h-48 shrink-0 overflow-hidden bg-surface-2">
+          <div className="relative h-56 shrink-0 overflow-hidden bg-surface-2">
             <Image
-              src={BEER_IMAGE}
+              src={imageUrl}
               alt={beer.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)' }} />
             {beer.style && (
