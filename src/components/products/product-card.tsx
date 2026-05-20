@@ -32,13 +32,14 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
     >
       <Link href={`/wines/${wine.slug}`} className="flex flex-col h-full group">
         <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
-          <div className="relative h-56 shrink-0 overflow-hidden bg-surface-2">
+          {/* TODO: run background removal via remove.bg API once all Datafeedr images are loaded into DB — estimated cost ~$0.02 per image (one-time batch) */}
+          <div className="relative h-[280px] shrink-0 overflow-hidden bg-[#0A0A0A]">
             <Image
               src={imageUrl}
               alt={wine.display_name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)' }} />
             <span
@@ -120,13 +121,14 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
     >
       <Link href={`/beers/${beer.slug}`} className="flex flex-col h-full group">
         <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
-          <div className="relative h-56 shrink-0 overflow-hidden bg-surface-2">
+          {/* TODO: run background removal via remove.bg API once all Datafeedr images are loaded into DB — estimated cost ~$0.02 per image (one-time batch) */}
+          <div className="relative h-[280px] shrink-0 overflow-hidden bg-[#0A0A0A]">
             <Image
               src={imageUrl}
               alt={beer.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)' }} />
             {beer.style && (

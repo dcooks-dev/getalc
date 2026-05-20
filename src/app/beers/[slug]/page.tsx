@@ -63,16 +63,16 @@ export default async function BeerDetailPage({ params }: { params: Promise<{ slu
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20">
             <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-              <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-surface">
+              {/* TODO: run background removal via remove.bg API once all Datafeedr images are loaded into DB — estimated cost ~$0.02 per image (one-time batch) */}
+              <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-[#0A0A0A]">
                 <Image
                   src={beerImage}
                   alt={beer.name}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
+                  className="object-contain"
                 />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.4) 0%, transparent 50%)' }} />
                 {beer.style && (
                   <span className="absolute top-4 left-4 text-xs px-3 py-1.5 rounded border border-amber-700/40 bg-amber-950/30 text-amber-200 font-medium tracking-wide">
                     {beer.style}
