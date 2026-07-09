@@ -13,7 +13,7 @@ export default function Footer() {
               Get<span className="text-gold">Alc</span>
             </h3>
             <p className="text-text-secondary text-sm leading-relaxed">
-              An editorial guide to the world&apos;s finest wines and craft beers. Curated with passion, explored with purpose.
+              An editorial guide to the world&apos;s finest wines. Curated with passion, explored with purpose.
             </p>
           </div>
           <div>
@@ -26,7 +26,12 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/beers" className="text-sm text-text-secondary hover:text-gold transition-colors">
-                  Craft Beers
+                  Beers <span className="text-text-muted">· Soon</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/spirits" className="text-sm text-text-secondary hover:text-gold transition-colors">
+                  Spirits <span className="text-text-muted">· Soon</span>
                 </Link>
               </li>
             </ul>

@@ -2,20 +2,17 @@ import type { Metadata } from 'next';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
 import BrowseClient from '@/components/browse/browse-client';
-import { getWines, getBeers } from '@/lib/supabase';
+import { getWinesV2 } from '@/lib/wines-v2';
 
 export const metadata: Metadata = {
   title: 'Browse Collection | GetAlc',
-  description: 'Tasting notes, flavor profiles, food pairings and regional insights for wines, beers and spirits from around the world.',
+  description: 'Tasting notes, flavor profiles, food pairings and regional insights for the world’s finest wines.',
 };
 
 export const revalidate = 3600;
 
 export default async function BrowsePage() {
-  const [{ wines }, { beers }] = await Promise.all([
-    getWines({ sortBy: 'rating', sortDir: 'desc', limit: 200 }),
-    getBeers({ sortBy: 'rating', sortDir: 'desc', limit: 200 }),
-  ]);
+  const { wines } = await getWinesV2({ sortBy: 'price', sortDir: 'desc', limit: 200 });
 
   return (
     <>
@@ -31,7 +28,7 @@ export default async function BrowsePage() {
               Browse Collection
             </h1>
           </div>
-          <BrowseClient wines={wines} beers={beers} />
+          <BrowseClient wines={wines} />
         </div>
       </main>
       <Footer />

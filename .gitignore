@@ -49,3 +49,9 @@ test folder/
 
 .env*.local
 scripts/matching_log.json
+
+# large data feed + local data snapshots (not needed in repo / deploy)
+awin database.csv
+scripts/collect-progress.json
+scripts/*-backup*.json
+scripts/legacy-*.json

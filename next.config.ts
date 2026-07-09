@@ -3,12 +3,10 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      // Allow any HTTPS source — needed for Datafeedr merchant product images
-      // which can come from hundreds of different retailer domains.
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
+      // Allow any HTTP/HTTPS source — Awin/Datafeedr merchant product images
+      // come from hundreds of different retailer domains (some served over http).
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' },
     ],
   },
 };

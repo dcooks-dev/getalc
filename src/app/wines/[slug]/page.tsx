@@ -1,19 +1,18 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Star, MapPin, Grape, ArrowLeft, ShoppingCart } from 'lucide-react';
+import { MapPin, Grape, ArrowLeft, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
-import { getWineBySlug } from '@/lib/supabase';
+import { getWineByIdV2 } from '@/lib/wines-v2';
 import { WineFlavorBars } from '@/components/products/flavor-bars';
 import DrinkingWindow from '@/components/products/drinking-window';
-import FoodPairings from '@/components/products/food-pairings';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
-import { WINE_COLOR_LABELS, WINE_COLOR_CLASSES, WINE_IMAGE_MAP, formatRating, formatReviewCount, formatPrice, cn } from '@/lib/utils';
+import { WINE_COLOR_LABELS, WINE_COLOR_CLASSES, WINE_IMAGE_MAP, formatPrice, cn } from '@/lib/utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const wine = await getWineBySlug(slug);
+  const wine = await getWineByIdV2(slug);
   if (!wine) return { title: 'Wine Not Found' };
   const image = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
   return {
@@ -29,10 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function WineDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const wine = await getWineBySlug(slug);
+  const wine = await getWineByIdV2(slug);
   if (!wine) notFound();
 
-  const currentYear = new Date().getFullYear();
   const wineImage = wine.image_url || WINE_IMAGE_MAP[wine.color] || WINE_IMAGE_MAP.red;
 
   const jsonLd = {
@@ -42,12 +40,9 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
     description: wine.description,
     image: wineImage,
     brand: { '@type': 'Brand', name: wine.producer },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: wine.rating,
-      reviewCount: wine.review_count,
-      bestRating: 5,
-    },
+    ...(wine.price != null && wine.price > 0
+      ? { offers: { '@type': 'Offer', price: wine.price, priceCurrency: wine.original_currency || 'USD', availability: 'https://schema.org/InStock' } }
+      : {}),
   };
 
   return (
@@ -97,20 +92,6 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                   {wine.display_name}
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-4 mb-4">
-                  <div className="flex items-center gap-1.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={14}
-                        className={i < Math.round(wine.rating) ? 'text-gold fill-gold' : 'text-text-muted'}
-                      />
-                    ))}
-                    <span className="text-sm font-semibold text-text ml-1">{formatRating(wine.rating)}</span>
-                    <span className="text-xs text-text-secondary">({formatReviewCount(wine.review_count)} ratings)</span>
-                  </div>
-                </div>
-
                 <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
                   {wine.region && (
                     <span className="flex items-center gap-1.5">
@@ -120,8 +101,9 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                   )}
                   {wine.country && <span className="text-text-muted">·</span>}
                   {wine.country && <span>{wine.country}</span>}
-                  {wine.vintage && <span className="text-text-secondary">· {wine.vintage}</span>}
+                  {wine.vintage > 0 && <span className="text-text-secondary">· {wine.vintage}</span>}
                   {wine.alcohol_pct > 0 && <span className="text-text-secondary">· {wine.alcohol_pct.toFixed(1)}% ABV</span>}
+                  {wine.residual_sugar && <span className="text-text-secondary capitalize">· {wine.residual_sugar}</span>}
                 </div>
               </div>
 
@@ -187,49 +169,104 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                 />
               </div>
 
-              {wine.drinking_window_start && wine.drinking_window_end && wine.vintage && (
-                <div className="p-5 rounded-lg border border-border bg-surface">
+              {wine.drinking_window_start > 0 && wine.drinking_window_end > 0 && wine.vintage > 0 && (
+                <div className="p-5 rounded-lg border border-border bg-surface space-y-4">
                   <DrinkingWindow
                     vintage={wine.vintage}
                     start={wine.drinking_window_start}
                     end={wine.drinking_window_end}
                   />
-                </div>
-              )}
-
-              {wine.food_pairings?.length > 0 && (
-                <div className="p-5 rounded-lg border border-border bg-surface">
-                  <FoodPairings pairings={wine.food_pairings} />
-                </div>
-              )}
-
-              {wine.region_insights && (
-                <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3 flex items-center gap-2">
-                    <MapPin size={12} /> Region Insights
-                  </h3>
-                  <p className="text-sm text-text-secondary leading-relaxed">{wine.region_insights}</p>
-                </div>
-              )}
-
-              {wine.description_long && (
-                <div>
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Extended Notes</h3>
-                  <p className="text-sm text-text-secondary leading-relaxed">{wine.description_long}</p>
-                </div>
-              )}
-
-              {wine.aroma_profile?.length > 0 && (
-                <div className="p-5 rounded-lg border border-border bg-surface">
-                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Aroma Profile</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {wine.aroma_profile.map((a) => (
-                      <span key={a} className="text-sm px-3 py-1 rounded-full border border-gold/30 text-gold-light bg-gold/5">
-                        {a}
-                      </span>
-                    ))}
+                  {wine.drinking_statement && (
+                    <p className="text-sm text-text-secondary leading-relaxed">{wine.drinking_statement}</p>
+                  )}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {wine.drinking_young && (
+                      <div>
+                        <p className="text-[11px] uppercase tracking-wide text-gold mb-1">Drink Young</p>
+                        <p className="text-sm text-text-secondary leading-relaxed">{wine.drinking_young}</p>
+                      </div>
+                    )}
+                    {wine.drinking_ripe && (
+                      <div>
+                        <p className="text-[11px] uppercase tracking-wide text-gold mb-1">At Peak Maturity</p>
+                        <p className="text-sm text-text-secondary leading-relaxed">{wine.drinking_ripe}</p>
+                      </div>
+                    )}
                   </div>
+                  {wine.drinking_storage && (
+                    <p className="text-xs text-text-muted">Storage — {wine.drinking_storage}</p>
+                  )}
                 </div>
+              )}
+
+              {wine.pairing_text && (
+                <div className="p-5 rounded-lg border border-border bg-surface">
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-3">Food Pairing</h3>
+                  <p className="text-sm text-text-secondary leading-relaxed">{wine.pairing_text}</p>
+                </div>
+              )}
+
+              {(wine.region_insights || wine.region_climate || wine.region_styles || wine.region_key_grapes) && (
+                <div className="p-5 rounded-lg border border-border bg-surface space-y-4">
+                  <h3 className="text-xs uppercase tracking-[0.2em] text-text-secondary flex items-center gap-2">
+                    <MapPin size={12} /> Region Insights{wine.region ? ` — ${wine.region}` : ''}
+                  </h3>
+                  {wine.region_insights && (
+                    <p className="text-sm text-text-secondary leading-relaxed">{wine.region_insights}</p>
+                  )}
+                  {wine.region_climate && (
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-gold mb-1">Climate &amp; Terroir</p>
+                      <p className="text-sm text-text-secondary leading-relaxed">{wine.region_climate}</p>
+                    </div>
+                  )}
+                  {wine.region_styles && (
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-gold mb-2">Signature Styles</p>
+                      <div className="flex flex-wrap gap-2">
+                        {wine.region_styles.split(';').map((s) => s.trim()).filter(Boolean).map((s) => (
+                          <span key={s} className="text-xs px-3 py-1 rounded-full border border-border text-text-secondary">{s}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {wine.region_key_grapes && (
+                    <div>
+                      <p className="text-[11px] uppercase tracking-wide text-gold mb-2">Key Grapes of the Region</p>
+                      <div className="flex flex-wrap gap-2">
+                        {wine.region_key_grapes.split(',').map((s) => s.trim()).filter(Boolean).map((s) => (
+                          <span key={s} className="text-xs px-3 py-1 rounded-full border border-border text-text-secondary">{s}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {(wine.description_long || wine.tasting_notes_long || wine.pairing_long) && (
+                <details className="group">
+                  <summary className="cursor-pointer text-xs uppercase tracking-[0.2em] text-text-secondary hover:text-gold transition-colors list-none flex items-center gap-2">
+                    Extended Notes
+                    <span className="text-text-muted group-open:rotate-90 transition-transform">›</span>
+                  </summary>
+                  <div className="pt-4 space-y-4">
+                    {wine.description_long && (
+                      <p className="text-sm text-text-secondary leading-relaxed">{wine.description_long}</p>
+                    )}
+                    {wine.tasting_notes_long && (
+                      <div>
+                        <p className="text-[11px] uppercase tracking-wide text-gold mb-1">Detailed Tasting Notes</p>
+                        <p className="text-sm text-text-secondary leading-relaxed">{wine.tasting_notes_long}</p>
+                      </div>
+                    )}
+                    {wine.pairing_long && (
+                      <div>
+                        <p className="text-[11px] uppercase tracking-wide text-gold mb-1">More on Pairing</p>
+                        <p className="text-sm text-text-secondary leading-relaxed">{wine.pairing_long}</p>
+                      </div>
+                    )}
+                  </div>
+                </details>
               )}
 
               <div className="space-y-3">

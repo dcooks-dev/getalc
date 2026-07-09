@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getWines } from '@/lib/supabase';
+import { getWinesV2 } from '@/lib/wines-v2';
 import { WineCard } from '@/components/products/product-card';
 import type { Wine } from '@/types';
-import { WINE_COLOR_LABELS, cn } from '@/lib/utils';
+import { WINE_COLOR_LABELS, getCountryName, cn } from '@/lib/utils';
 
 interface Props {
   filterOptions: {
@@ -19,12 +19,12 @@ interface Props {
 }
 
 const SORT_OPTIONS = [
-  { value: 'rating-desc', label: 'Top Rated' },
-  { value: 'rating-asc', label: 'Lowest Rated' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'price-asc', label: 'Price: Low to High' },
   { value: 'name-asc', label: 'Name A–Z' },
   { value: 'name-desc', label: 'Name Z–A' },
-  { value: 'alcohol_pct-desc', label: 'Highest ABV' },
-  { value: 'alcohol_pct-asc', label: 'Lowest ABV' },
+  { value: 'alcohol-desc', label: 'Highest ABV' },
+  { value: 'alcohol-asc', label: 'Lowest ABV' },
 ];
 
 function RangeSlider({
@@ -108,9 +108,8 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
   const [acidity, setAcidity] = useState<[number, number]>([1, 10]);
   const [tannins, setTannins] = useState<[number, number]>([1, 10]);
   const [body, setBody] = useState<[number, number]>([1, 10]);
-  const [rating, setRating] = useState<[number, number]>([3.0, 5.0]);
   const [drinkingNow, setDrinkingNow] = useState(false);
-  const [sort, setSort] = useState('rating-desc');
+  const [sort, setSort] = useState('price-desc');
   const [page, setPage] = useState(0);
   const pageSize = 24;
 
@@ -118,7 +117,7 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
     setLoading(true);
     try {
       const [sortBy, sortDir] = sort.split('-') as [string, 'asc' | 'desc'];
-      const result = await getWines({
+      const result = await getWinesV2({
         search: search || undefined,
         color: colors.length ? colors : undefined,
         country: countries.length ? countries : undefined,
@@ -132,8 +131,6 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
         maxTannins: tannins[1] < 10 ? tannins[1] : undefined,
         minBody: body[0] > 1 ? body[0] : undefined,
         maxBody: body[1] < 10 ? body[1] : undefined,
-        minRating: rating[0] > 3.0 ? rating[0] : undefined,
-        maxRating: rating[1] < 5.0 ? rating[1] : undefined,
         drinkingNow,
         sortBy,
         sortDir,
@@ -145,7 +142,7 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
     } finally {
       setLoading(false);
     }
-  }, [search, colors, countries, regions, grapes, sweetness, acidity, tannins, body, rating, drinkingNow, sort, page]);
+  }, [search, colors, countries, regions, grapes, sweetness, acidity, tannins, body, drinkingNow, sort, page]);
 
   useEffect(() => { fetchWines(); }, [fetchWines]);
 
@@ -158,14 +155,13 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
     setSearch(''); setColors([]); setCountries([]); setRegions([]);
     setGrapes([]); setSweetness([1, 10]); setAcidity([1, 10]);
     setTannins([1, 10]); setBody([1, 10]);
-    setRating([3.0, 5.0]); setDrinkingNow(false); setPage(0);
+    setDrinkingNow(false); setPage(0);
   }
 
   const hasFilters = search || colors.length || countries.length || regions.length ||
     grapes.length || drinkingNow ||
     sweetness[0] > 1 || sweetness[1] < 10 || acidity[0] > 1 || acidity[1] < 10 ||
-    tannins[0] > 1 || tannins[1] < 10 || body[0] > 1 || body[1] < 10 ||
-    rating[0] > 3.0 || rating[1] < 5.0;
+    tannins[0] > 1 || tannins[1] < 10 || body[0] > 1 || body[1] < 10;
 
   const sidebar = (
     <div className="space-y-0">
@@ -198,7 +194,7 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
                 onChange={() => { toggleArr(countries, setCountries, c); }}
                 className="accent-gold"
               />
-              <span className="text-xs text-text-secondary group-hover:text-text transition-colors">{c}</span>
+              <span className="text-xs text-text-secondary group-hover:text-text transition-colors">{getCountryName(c)}</span>
             </label>
           ))}
         </div>
@@ -243,10 +239,6 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
           <RangeSlider label="Tannins" min={1} max={10} value={tannins} onChange={(v) => { setTannins(v); setPage(0); }} />
           <RangeSlider label="Body" min={1} max={10} value={body} onChange={(v) => { setBody(v); setPage(0); }} />
         </div>
-      </FilterSection>
-
-      <FilterSection title="Rating" defaultOpen={false}>
-        <RangeSlider label="Rating" min={3.0} max={5.0} step={0.1} value={rating} onChange={(v) => { setRating(v); setPage(0); }} />
       </FilterSection>
 
       <div className="py-4">
@@ -349,7 +341,7 @@ export default function WineBrowseClient({ filterOptions, filterError }: Props) 
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {wines.map((wine, i) => (
-              <WineCard key={wine.id} wine={wine} index={i} />
+              <WineCard key={wine.slug} wine={wine} index={i} />
             ))}
           </div>
         )}

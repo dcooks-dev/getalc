@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 const links = [
   { href: '/wines', label: 'Wines' },
   { href: '/beers', label: 'Beers' },
+  { href: '/spirits', label: 'Spirits' },
 ];
 
 export default function Navbar() {

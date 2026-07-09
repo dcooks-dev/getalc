@@ -75,11 +75,9 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
 
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-1.5">
-                  <Star size={12} className="text-gold fill-gold" />
-                  <span className="text-sm font-semibold text-text">{formatRating(wine.rating)}</span>
-                  <span className="text-xs text-text-secondary">({formatReviewCount(wine.review_count)})</span>
-                </div>
+                {wine.price != null && wine.price > 0 ? (
+                  <span className="text-sm font-semibold text-gold">{formatPrice(wine.price)}</span>
+                ) : <span />}
                 {wine.alcohol_pct > 0 && (
                   <span className="text-xs text-text-secondary">{wine.alcohol_pct.toFixed(1)}% ABV</span>
                 )}

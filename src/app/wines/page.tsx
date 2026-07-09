@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
 import WineBrowseClient from '@/components/browse/wine-browse-client';
-import { getWineFilterOptions } from '@/lib/supabase';
+import { getWineFilterOptionsV2 } from '@/lib/wines-v2';
 
 export const metadata: Metadata = {
   title: 'Wine Collection',
@@ -14,7 +14,7 @@ export const revalidate = 3600;
 
 export default async function WinesPage() {
   let filterError = false;
-  const filterOptions = await getWineFilterOptions().catch(() => {
+  const filterOptions = await getWineFilterOptionsV2().catch(() => {
     filterError = true;
     return { colors: [], countries: [], regions: [], grapes: [] };
   });

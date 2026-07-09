@@ -1,26 +1,23 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Wine, Beer } from 'lucide-react';
-import { getFeaturedWines, getFeaturedBeers } from '@/lib/supabase';
-import { WineCard, BeerCard } from '@/components/products/product-card';
+import { ArrowRight, Wine } from 'lucide-react';
+import { getFeaturedWinesV2 } from '@/lib/wines-v2';
+import { WineCard } from '@/components/products/product-card';
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
 import AgeGate from '@/components/age-gate';
 import HeroSection from '@/components/home/hero-section';
 
 export const metadata: Metadata = {
-  title: 'GetAlc — Discover Premium Wines & Craft Beers',
+  title: 'GetAlc — Discover Premium Wines',
   description:
-    'Explore an editorial collection of premium wines and craft beers. Deep tasting notes, flavor profiles, food pairings and more — all in one place.',
+    'Explore an editorial collection of premium wines. Deep tasting notes, flavor profiles, food pairings, drinking windows and regional insights — all in one place.',
 };
 
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [featuredWines, featuredBeers] = await Promise.all([
-    getFeaturedWines(8).catch(() => []),
-    getFeaturedBeers(8).catch(() => []),
-  ]);
+  const featuredWines = await getFeaturedWinesV2(8).catch(() => []);
 
   return (
     <>
@@ -53,7 +50,7 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {featuredWines.map((wine, i) => (
-                <WineCard key={wine.id} wine={wine} index={i} />
+                <WineCard key={wine.slug} wine={wine} index={i} />
               ))}
             </div>
           </section>
@@ -73,37 +70,21 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {featuredBeers.length > 0 && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div className="flex items-end justify-between mb-10">
-              <div>
-                <p className="text-xs uppercase tracking-[0.25em] text-gold mb-2 flex items-center gap-2">
-                  <Beer size={12} /> Featured
-                </p>
-                <h2
-                  className="text-3xl md:text-4xl font-bold text-text"
-                  style={{ fontFamily: 'var(--font-playfair-display)' }}
-                >
-                  Craft Beers
-                </h2>
-              </div>
-              <Link
-                href="/beers"
-                className="flex items-center gap-2 text-sm text-text-secondary hover:text-gold transition-colors group"
-              >
-                View All
-                <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {featuredBeers.map((beer, i) => (
-                <BeerCard key={beer.id} beer={beer} index={i} />
-              ))}
-            </div>
-          </section>
-        )}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <p className="text-xs uppercase tracking-[0.25em] text-gold mb-2">More to Explore</p>
+          <h2
+            className="text-3xl md:text-4xl font-bold text-text mb-4"
+            style={{ fontFamily: 'var(--font-playfair-display)' }}
+          >
+            Beers &amp; Spirits — Coming Soon
+          </h2>
+          <p className="text-text-secondary max-w-xl mx-auto">
+            We&rsquo;re extending the same verified, editorial approach to craft beers and spirits.
+            Our wine collection is live now.
+          </p>
+        </section>
 
-        {featuredWines.length === 0 && featuredBeers.length === 0 && (
+        {featuredWines.length === 0 && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
             <h2
               className="text-3xl font-bold text-text mb-4"

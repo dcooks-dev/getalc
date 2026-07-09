@@ -41,6 +41,18 @@ export interface Wine {
   datafeedr_matched: boolean;
   match_confidence_score: number | null;
   needs_review: boolean;
+  // Optional richer Grapeminds fields (populated by the wines_v2 adapter)
+  tasting_notes_long?: string;
+  pairing_text?: string;
+  drinking_statement?: string;
+  drinking_young?: string;
+  drinking_ripe?: string;
+  drinking_storage?: string;
+  region_climate?: string;
+  region_styles?: string;
+  region_key_grapes?: string;
+  residual_sugar?: string;
+  producer_title?: string;
 }
 
 export interface Beer {

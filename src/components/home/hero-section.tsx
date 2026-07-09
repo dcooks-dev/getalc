@@ -60,7 +60,7 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          Tasting notes, flavor profiles, food pairings and regional insights for wines, beers and spirits from around the world.
+          Tasting notes, flavor profiles, drinking windows and regional insights for the world&rsquo;s finest wines — beers and spirits coming soon.
         </motion.p>
 
         <motion.div
@@ -96,9 +96,9 @@ export default function HeroSection() {
           className="mt-20 flex items-center justify-center gap-12 text-center"
         >
           {[
-            { value: '40+', label: 'Premium Wines' },
-            { value: '25+', label: 'Craft Beers' },
-            { value: '15+', label: 'Countries' },
+            { value: '50+', label: 'Premium Wines' },
+            { value: '6', label: 'Countries' },
+            { value: 'Soon', label: 'Beers & Spirits' },
           ].map((stat) => (
             <div key={stat.label}>
               <div
