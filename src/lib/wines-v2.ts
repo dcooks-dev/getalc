@@ -104,7 +104,10 @@ export function mapV2ToWine(r: WineV2Row): Wine {
     image_url: r.image_url ?? '',
     food_pairings: [],
     created_at: r.created_at,
-    product_url: r.affiliate_url || r.product_url,
+    // Prefer the direct merchant link — the Awin affiliate (pclick) links are
+    // inactive until the Awin publisher account/program is live. Fall back to
+    // the affiliate link only if no direct URL exists.
+    product_url: r.product_url || r.affiliate_url,
     price: r.price,
     original_price: r.rrp_price,
     original_currency: r.currency,
