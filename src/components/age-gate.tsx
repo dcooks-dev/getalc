@@ -36,65 +36,59 @@ export default function AgeGate() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center"
-          style={{ backgroundColor: 'rgba(0,0,0,0.96)', backdropFilter: 'blur(12px)' }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(43,32,25,0.45)', backdropFilter: 'blur(6px)' }}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 24 }}
+            initial={{ opacity: 0, scale: 0.96, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 24 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="w-full max-w-md mx-4 text-center"
+            exit={{ opacity: 0, scale: 0.96, y: 20 }}
+            transition={{ duration: 0.35, delay: 0.05 }}
+            className="w-full max-w-md text-center bg-surface border border-border rounded-2xl px-8 py-10 sm:px-10"
+            style={{ boxShadow: '0 24px 60px rgba(43,32,25,0.28)' }}
           >
-            <div className="mb-8">
-              <div className="w-16 h-px bg-gold mx-auto mb-6" />
-              <h1
-                className="text-4xl md:text-5xl font-bold mb-3 text-text"
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                GetAlc
+            <div className="mb-7">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text">
+                Get<span className="text-gold">Alc</span>
               </h1>
-              <p className="text-text-secondary text-sm tracking-[0.25em] uppercase">
-                Premium Spirits Discovery
+              <p className="text-text-muted text-xs tracking-[0.25em] uppercase">
+                Premium Wine Discovery
               </p>
-              <div className="w-16 h-px bg-gold mx-auto mt-6" />
+              <div className="w-12 h-px bg-gold mx-auto mt-6" />
             </div>
 
-            <div className="mb-10">
-              <h2
-                className="text-2xl font-semibold text-text mb-3"
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                Welcome
+            <div className="mb-9">
+              <h2 className="text-xl font-semibold text-text mb-3">
+                Are you of legal drinking age?
               </h2>
-              <p className="text-text-secondary leading-relaxed">
-                This website contains content related to alcoholic beverages. Please confirm you are of legal drinking age in your country.
+              <p className="text-text-secondary leading-relaxed text-sm">
+                This site features content about alcoholic beverages. Please confirm you&rsquo;re of legal drinking age in your country to continue.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={handleConfirm}
-                className="px-8 py-3 text-sm font-medium tracking-wider uppercase transition-all duration-300 cursor-pointer"
+                className="px-8 py-3 text-sm font-medium tracking-wide transition-all duration-300 cursor-pointer hover:opacity-90"
                 style={{
                   background: 'linear-gradient(135deg, #9B2D3A, #7E2430)',
                   color: '#FFFFFF',
-                  borderRadius: '2px',
+                  borderRadius: '999px',
                 }}
               >
-                I Am of Legal Age
+                Yes, I&rsquo;m of legal age
               </button>
               <button
                 onClick={handleDeny}
-                className="px-8 py-3 text-sm font-medium tracking-wider uppercase border border-border text-text-secondary hover:text-text transition-all duration-300 cursor-pointer"
-                style={{ borderRadius: '2px', background: 'transparent' }}
+                className="px-8 py-3 text-sm font-medium tracking-wide border border-border text-text-secondary hover:text-text hover:border-gold transition-all duration-300 cursor-pointer"
+                style={{ borderRadius: '999px', background: 'transparent' }}
               >
-                I Am Not
+                No
               </button>
             </div>
 
-            <p className="mt-8 text-text-muted text-xs">
-              By entering, you agree to our Terms of Service. Drink responsibly.
+            <p className="mt-7 text-text-muted text-xs">
+              By entering, you agree to our Terms of Service. Please drink responsibly.
             </p>
           </motion.div>
         </motion.div>
