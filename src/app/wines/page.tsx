@@ -28,7 +28,7 @@ export default async function WinesPage() {
             <p className="text-xs uppercase tracking-[0.25em] text-gold mb-2">Collection</p>
             <h1
               className="text-4xl md:text-5xl font-bold text-text"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             >
               Wine
             </h1>

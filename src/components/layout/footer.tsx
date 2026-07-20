@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <h3
               className="text-xl font-bold mb-3 text-text"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             >
               Get<span className="text-gold">Alc</span>
             </h3>

@@ -50,7 +50,7 @@ export default function AgeGate() {
               <div className="w-16 h-px bg-gold mx-auto mb-6" />
               <h1
                 className="text-4xl md:text-5xl font-bold mb-3 text-text"
-                style={{ fontFamily: 'var(--font-playfair-display)' }}
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 GetAlc
               </h1>
@@ -63,7 +63,7 @@ export default function AgeGate() {
             <div className="mb-10">
               <h2
                 className="text-2xl font-semibold text-text mb-3"
-                style={{ fontFamily: 'var(--font-playfair-display)' }}
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Welcome
               </h2>
@@ -77,8 +77,8 @@ export default function AgeGate() {
                 onClick={handleConfirm}
                 className="px-8 py-3 text-sm font-medium tracking-wider uppercase transition-all duration-300 cursor-pointer"
                 style={{
-                  background: 'linear-gradient(135deg, #D4A853, #B8892E)',
-                  color: '#0A0A0A',
+                  background: 'linear-gradient(135deg, #9B2D3A, #7E2430)',
+                  color: '#FFFFFF',
                   borderRadius: '2px',
                 }}
               >

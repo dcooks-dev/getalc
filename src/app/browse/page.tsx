@@ -12,7 +12,8 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function BrowsePage() {
-  const { wines } = await getWinesV2({ sortBy: 'price', sortDir: 'desc', limit: 200 });
+  const { wines } = await getWinesV2({ sortBy: 'price', sortDir: 'desc', limit: 200 })
+    .catch(() => ({ wines: [] }));
 
   return (
     <>
@@ -23,7 +24,7 @@ export default async function BrowsePage() {
             <p className="text-xs uppercase tracking-[0.25em] text-gold mb-2">The Alcohol Encyclopedia</p>
             <h1
               className="text-4xl md:text-5xl font-bold text-text"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             >
               Browse Collection
             </h1>

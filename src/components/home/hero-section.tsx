@@ -8,26 +8,26 @@ export default function HeroSection() {
     <section
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{
-        background: 'linear-gradient(to bottom, #0A0A0A 0%, #0D0B08 60%, #0A0A0A 100%)',
+        background: 'linear-gradient(to bottom, #FBF9F5 0%, #F5EDE2 55%, #FBF9F5 100%)',
       }}
     >
       <div className="absolute inset-0 pointer-events-none">
         <div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
           style={{
-            background: 'radial-gradient(ellipse, rgba(212,168,83,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse, rgba(155,45,58,0.06) 0%, transparent 70%)',
             filter: 'blur(40px)',
           }}
         />
         <div
           className="absolute bottom-0 left-0 right-0 h-64"
-          style={{ background: 'linear-gradient(to top, #0A0A0A, transparent)' }}
+          style={{ background: 'linear-gradient(to top, #FBF9F5, transparent)' }}
         />
       </div>
 
       <div className="absolute top-0 left-0 right-0 grid grid-cols-3 h-full opacity-[0.03] pointer-events-none select-none">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="border-r border-white/50 h-full" />
+          <div key={i} className="border-r border-black/40 h-full" />
         ))}
       </div>
 
@@ -47,7 +47,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold leading-none mb-6 text-text"
-          style={{ fontFamily: 'var(--font-playfair-display)' }}
+          style={{ fontFamily: 'var(--font-inter)' }}
         >
           Discover
           <br />
@@ -73,17 +73,17 @@ export default function HeroSection() {
             href="/browse"
             className="px-8 py-4 text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-gold"
             style={{
-              background: 'linear-gradient(135deg, #D4A853, #B8892E)',
-              color: '#0A0A0A',
-              borderRadius: '2px',
+              background: 'linear-gradient(135deg, #9B2D3A, #7E2430)',
+              color: '#FFFFFF',
+              borderRadius: '999px',
             }}
           >
             Explore Collection →
           </Link>
           <Link
             href="/browse#categories"
-            className="px-8 py-4 text-sm font-medium tracking-wider uppercase border border-border text-text-secondary hover:text-text hover:border-gold transition-all duration-300"
-            style={{ borderRadius: '2px' }}
+            className="px-8 py-4 text-sm font-medium tracking-wider uppercase border border-border bg-surface text-text-secondary hover:text-text hover:border-gold transition-all duration-300"
+            style={{ borderRadius: '999px' }}
           >
             Browse by Category →
           </Link>
@@ -103,7 +103,7 @@ export default function HeroSection() {
             <div key={stat.label}>
               <div
                 className="text-3xl font-bold text-gold mb-1"
-                style={{ fontFamily: 'var(--font-playfair-display)' }}
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 {stat.value}
               </div>

@@ -60,12 +60,12 @@ export const WINE_COLOR_LABELS: Record<string, string> = {
 };
 
 export const WINE_COLOR_CLASSES: Record<string, string> = {
-  red: 'bg-red-950/30 text-red-300 border-red-800/40',
-  white: 'bg-yellow-950/30 text-yellow-200 border-yellow-700/40',
-  rose: 'bg-pink-950/30 text-pink-300 border-pink-700/40',
-  sparkling: 'bg-amber-950/30 text-amber-200 border-amber-600/40',
-  dessert: 'bg-orange-950/30 text-orange-300 border-orange-700/40',
-  fortified: 'bg-purple-950/30 text-purple-300 border-purple-700/40',
+  red: 'bg-[#F3E3E5] text-[#9B2D3A] border-[#EBD1D5]',
+  white: 'bg-[#F5F0DE] text-[#897020] border-[#EDE4C4]',
+  rose: 'bg-[#FBE9EE] text-[#BF4E6E] border-[#F3D3DD]',
+  sparkling: 'bg-[#F6EED9] text-[#986A14] border-[#EEE1C0]',
+  dessert: 'bg-[#F7E9DC] text-[#A65B20] border-[#EFD8C4]',
+  fortified: 'bg-[#EFE6F3] text-[#6E4A86] border-[#E0D2EA]',
 };
 
 export const WINE_IMAGE_MAP: Record<string, string> = {

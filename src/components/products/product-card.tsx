@@ -33,7 +33,7 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
       <Link href={`/wines/${wine.slug}`} className="flex flex-col h-full group">
         <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
           {/* TODO: run background removal via remove.bg API once all Datafeedr images are loaded into DB — estimated cost ~$0.02 per image (one-time batch) */}
-          <div className="relative h-[280px] shrink-0 overflow-hidden bg-[#0A0A0A]">
+          <div className="relative h-[280px] shrink-0 overflow-hidden bg-[#F4EEE6]">
             <Image
               src={imageUrl}
               alt={wine.display_name}
@@ -41,7 +41,7 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(43,32,25,0.05) 0%, transparent 55%)' }} />
             <span
               className={cn(
                 'absolute top-3 left-3 text-xs px-2 py-1 rounded border font-medium tracking-wide',
@@ -64,7 +64,7 @@ export function WineCard({ wine, index = 0 }: WineCardProps) {
               </p>
               <h3
                 className="text-base font-semibold text-text mb-1 line-clamp-2 group-hover:text-gold transition-colors duration-300"
-                style={{ fontFamily: 'var(--font-playfair-display)' }}
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 {wine.display_name}
               </h3>
@@ -120,7 +120,7 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
       <Link href={`/beers/${beer.slug}`} className="flex flex-col h-full group">
         <div className="card-hover rounded-lg overflow-hidden border border-border bg-surface flex flex-col h-full">
           {/* TODO: run background removal via remove.bg API once all Datafeedr images are loaded into DB — estimated cost ~$0.02 per image (one-time batch) */}
-          <div className="relative h-[280px] shrink-0 overflow-hidden bg-[#0A0A0A]">
+          <div className="relative h-[280px] shrink-0 overflow-hidden bg-[#F4EEE6]">
             <Image
               src={imageUrl}
               alt={beer.name}
@@ -128,7 +128,7 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(43,32,25,0.05) 0%, transparent 55%)' }} />
             {beer.style && (
               <span className="absolute top-3 left-3 text-xs px-2 py-1 rounded border border-amber-700/40 bg-amber-950/30 text-amber-200 font-medium tracking-wide">
                 {beer.style}
@@ -148,7 +148,7 @@ export function BeerCard({ beer, index = 0 }: BeerCardProps) {
               </p>
               <h3
                 className="text-base font-semibold text-text mb-1 line-clamp-2 group-hover:text-gold transition-colors duration-300"
-                style={{ fontFamily: 'var(--font-playfair-display)' }}
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 {beer.name}
               </h3>

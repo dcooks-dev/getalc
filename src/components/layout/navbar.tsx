@@ -34,7 +34,7 @@ export default function Navbar() {
             : 'border-b border-transparent'
         )}
         style={{
-          backgroundColor: scrolled ? 'rgba(10,10,10,0.95)' : 'transparent',
+          backgroundColor: scrolled ? 'rgba(251,249,245,0.92)' : 'transparent',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
         }}
       >
@@ -47,7 +47,7 @@ export default function Navbar() {
             >
               <span
                 className="text-2xl font-bold tracking-tight text-text group-hover:text-gold transition-colors duration-300"
-                style={{ fontFamily: 'var(--font-playfair-display)' }}
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Get<span className="text-gold">Alc</span>
               </span>
@@ -97,7 +97,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.25 }}
             className="fixed top-16 left-0 right-0 z-40 border-b border-border"
-            style={{ backgroundColor: 'rgba(10,10,10,0.98)', backdropFilter: 'blur(12px)' }}
+            style={{ backgroundColor: 'rgba(251,249,245,0.98)', backdropFilter: 'blur(12px)' }}
           >
             <nav className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-4">
               {links.map((link) => (

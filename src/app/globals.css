@@ -1,34 +1,39 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0A0A0A;
-  --color-surface: #111111;
-  --color-surface-2: #161616;
-  --color-surface-hover: #1C1C1C;
-  --color-border: #222222;
-  --color-border-subtle: #1A1A1A;
-  --color-gold: #D4A853;
-  --color-gold-light: #E8C47A;
-  --color-gold-dark: #B8892E;
-  --color-gold-muted: #8B6A2E;
-  --color-text: #FFFFFF;
-  --color-text-secondary: #9A9A9A;
-  --color-text-muted: #555555;
-  --color-wine-red: #8B1A1A;
-  --color-wine-white: #F5E6C8;
-  --color-wine-rose: #E8919B;
+  /* Light, inviting — warm off-white base (our touch vs Vivino's stark white) */
+  --color-background: #FBF9F5;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F4EFE7;
+  --color-surface-hover: #EFE8DD;
+  --color-border: #E8E0D4;
+  --color-border-subtle: #F0EAE0;
+  /* Primary accent = refined burgundy (the "gold" tokens are repointed to it,
+     so every existing text-gold/bg-gold/border-gold utility becomes burgundy) */
+  --color-gold: #9B2D3A;
+  --color-gold-light: #B84B58;
+  --color-gold-dark: #7E2430;
+  --color-gold-muted: #C99DA3;
+  /* Warm near-black text on light */
+  --color-text: #2B2019;
+  --color-text-secondary: #6B5D52;
+  --color-text-muted: #9A8B7C;
+  --color-wine-red: #9B2D3A;
+  --color-wine-white: #C4A24B;
+  --color-wine-rose: #C85C74;
 
   --font-playfair: var(--font-playfair-display);
   --font-inter: var(--font-inter);
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  /* Rounder, friendlier corners */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
 
-  --shadow-gold: 0 0 24px rgba(212, 168, 83, 0.12);
-  --shadow-gold-lg: 0 0 48px rgba(212, 168, 83, 0.18);
+  --shadow-gold: 0 6px 20px rgba(43, 32, 25, 0.08);
+  --shadow-gold-lg: 0 12px 34px rgba(43, 32, 25, 0.12);
 }
 
 *, *::before, *::after {
@@ -40,62 +45,65 @@ html {
 }
 
 body {
-  background-color: #0A0A0A;
-  color: #FFFFFF;
+  background-color: #FBF9F5;
+  color: #2B2019;
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
+/* Clean sans headings — friendly and modern, like Vivino */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-playfair-display), Georgia, serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 ::selection {
-  background-color: rgba(212, 168, 83, 0.3);
-  color: #FFFFFF;
+  background-color: rgba(155, 45, 58, 0.15);
+  color: #2B2019;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #F4EFE7;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333333;
-  border-radius: 3px;
+  background: #DAD0C1;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4A853;
+  background: #9B2D3A;
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, #D4A853 0%, #E8C47A 50%, #B8892E 100%);
+  background: linear-gradient(135deg, #9B2D3A 0%, #B84B58 55%, #7E2430 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gold-border-glow {
-  box-shadow: 0 0 0 1px rgba(212, 168, 83, 0.3), 0 0 24px rgba(212, 168, 83, 0.08);
+  box-shadow: 0 0 0 1px rgba(155, 45, 58, 0.18);
 }
 
 .card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 0 1px rgba(212, 168, 83, 0.25), 0 20px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(43, 32, 25, 0.12);
+  border-color: #DAD0C1;
 }
 
 .flavor-bar-track {
-  background: linear-gradient(to right, #1A1A1A, #222222);
+  background: #EFE9DF;
 }
 
 @keyframes shimmer {
@@ -104,7 +112,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%);
+  background: linear-gradient(90deg, #F4EFE7 25%, #EDE6DA 50%, #F4EFE7 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

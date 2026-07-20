@@ -34,7 +34,7 @@ export default function FlavorBars({ bars, className }: FlavorBarsProps) {
                 transition={{ duration: 0.8, delay: 0.1 + index * 0.08, ease: 'easeOut' }}
                 className="absolute inset-y-0 left-0 rounded-full"
                 style={{
-                  background: 'linear-gradient(to right, #B8892E, #D4A853, #E8C47A)',
+                  background: 'linear-gradient(to right, #7E2430, #9B2D3A, #B84B58)',
                 }}
               />
             </div>

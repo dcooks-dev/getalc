@@ -11,7 +11,7 @@ export default function ComingSoon({ category }: { category: string }) {
           <p className="text-xs uppercase tracking-[0.3em] text-gold mb-4">{category}</p>
           <h1
             className="text-4xl md:text-5xl font-bold text-text mb-6"
-            style={{ fontFamily: 'var(--font-playfair-display)' }}
+            style={{ fontFamily: 'var(--font-inter)' }}
           >
             Coming Soon
           </h1>

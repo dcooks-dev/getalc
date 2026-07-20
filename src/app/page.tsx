@@ -35,7 +35,7 @@ export default async function HomePage() {
                 </p>
                 <h2
                   className="text-3xl md:text-4xl font-bold text-text"
-                  style={{ fontFamily: 'var(--font-playfair-display)' }}
+                  style={{ fontFamily: 'var(--font-inter)' }}
                 >
                   Exceptional Wines
                 </h2>
@@ -56,12 +56,12 @@ export default async function HomePage() {
           </section>
         )}
 
-        <section className="border-y border-border py-20" style={{ background: 'linear-gradient(135deg, #0D0D0D 0%, #111111 100%)' }}>
+        <section className="border-y border-border py-20" style={{ background: 'linear-gradient(135deg, #F6EEE3 0%, #F1E8DA 100%)' }}>
           <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             <div className="w-12 h-px bg-gold mx-auto mb-8" />
             <blockquote
               className="text-2xl md:text-3xl font-light text-text leading-relaxed mb-6"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             >
               &ldquo;Wine is the most civilized thing in the world.&rdquo;
             </blockquote>
@@ -74,7 +74,7 @@ export default async function HomePage() {
           <p className="text-xs uppercase tracking-[0.25em] text-gold mb-2">More to Explore</p>
           <h2
             className="text-3xl md:text-4xl font-bold text-text mb-4"
-            style={{ fontFamily: 'var(--font-playfair-display)' }}
+            style={{ fontFamily: 'var(--font-inter)' }}
           >
             Beers &amp; Spirits — Coming Soon
           </h2>
@@ -88,7 +88,7 @@ export default async function HomePage() {
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
             <h2
               className="text-3xl font-bold text-text mb-4"
-              style={{ fontFamily: 'var(--font-playfair-display)' }}
+              style={{ fontFamily: 'var(--font-inter)' }}
             >
               Collection Coming Soon
             </h2>

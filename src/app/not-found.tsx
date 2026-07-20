@@ -12,7 +12,7 @@ export default function NotFound() {
           <p className="text-xs uppercase tracking-[0.4em] text-gold mb-4">404</p>
           <h1
             className="text-5xl md:text-6xl font-bold text-text mb-4"
-            style={{ fontFamily: 'var(--font-playfair-display)' }}
+            style={{ fontFamily: 'var(--font-inter)' }}
           >
             Page Not Found
           </h1>
@@ -24,8 +24,8 @@ export default function NotFound() {
               href="/"
               className="px-8 py-3 text-sm font-medium tracking-wider uppercase transition-all duration-300"
               style={{
-                background: 'linear-gradient(135deg, #D4A853, #B8892E)',
-                color: '#0A0A0A',
+                background: 'linear-gradient(135deg, #9B2D3A, #7E2430)',
+                color: '#FFFFFF',
                 borderRadius: '2px',
               }}
             >

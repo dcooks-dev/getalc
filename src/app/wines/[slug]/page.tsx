@@ -61,7 +61,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20">
             <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
               {/* TODO: run background removal via remove.bg API once all Datafeedr images are loaded into DB — estimated cost ~$0.02 per image (one-time batch) */}
-              <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-[#0A0A0A]">
+              <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-[#F4EEE6]">
                 <Image
                   src={wineImage}
                   alt={wine.display_name}
@@ -87,7 +87,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                 <p className="text-xs uppercase tracking-[0.2em] text-text-muted mb-1">{wine.producer}</p>
                 <h1
                   className="text-3xl md:text-4xl font-bold text-text mb-3 leading-tight"
-                  style={{ fontFamily: 'var(--font-playfair-display)' }}
+                  style={{ fontFamily: 'var(--font-inter)' }}
                 >
                   {wine.display_name}
                 </h1>
@@ -110,13 +110,13 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
                   <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">ABV</span>
-                  <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
+                  <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-inter)' }}>
                     {wine.alcohol_pct > 0 ? `${wine.alcohol_pct.toFixed(1)}%` : '—'}
                   </span>
                 </div>
                 <div className="p-3 rounded-lg border border-border bg-surface text-center">
                   <span className="text-xs uppercase tracking-wide text-text-secondary block mb-1">Vintage</span>
-                  <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-playfair-display)' }}>
+                  <span className="text-xl font-bold text-text" style={{ fontFamily: 'var(--font-inter)' }}>
                     {wine.vintage || '—'}
                   </span>
                 </div>
@@ -274,7 +274,7 @@ export default async function WineDetailPage({ params }: { params: Promise<{ slu
                   <div className="flex items-baseline gap-2">
                     <span
                       className="text-2xl font-bold text-gold"
-                      style={{ fontFamily: 'var(--font-playfair-display)' }}
+                      style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       {formatPrice(wine.price)}
                     </span>
